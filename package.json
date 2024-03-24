@@ -1,0 +1,45 @@
+{
+  "name": "egrim",
+  "version": "0.0.0",
+  "private": true,
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": [
+      "es2018",
+      "esnext.asynciterable"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "ts-node src/server/index.ts",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.16.1",
+    "@types/graphql-fields": "^1.3.5",
+    "apollo-server": "^3.12.0",
+    "apollo-server-express": "^3.12.0",
+    "express-jwt": "^8.4.1",
+    "graphql-fields": "^2.0.3",
+    "graphql-scalars": "^1.22.2",
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.6.0",
+    "type-graphql": "^2.0.0-beta.2",
+    "vue": "^3.2.47"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "prisma": "^4.16.1",
+    "ts-node": "^10.9.1",
+    "typegraphql-prisma": "^0.26.0",
+    "typescript": "^5.1.3",
+    "vite": "^4.1.4"
+  }
+}

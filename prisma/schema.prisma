@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider                 = "typegraphql-prisma"
+  omitInputFieldsByDefault = "createdAt,updatedAt"
+  output                   = "generated/type-graphql"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://tradical@localhost:5432/egrim"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  username     String   @unique
+  rituals      Ritual[]
+  /// @TypeGraphQL.omit(output: true)
+  passwordHash String
+  /// @TypeGraphQL.omit(output: true)
+  passwordSalt String
+}
+
+// Ritual models
+model Ritual {
+  id             String                              @id @default(uuid())
+  createdAt      DateTime                            @default(now())
+  updatedAt      DateTime                            @updatedAt
+  user           User                                @relation(fields: [userId], references: [id])
+  type           RitualType
+  description    String
+  date           DateTime
+  moonPhase      Decimal
+  tools          Tool[]
+  pictures       String[]
+  notes          String?
+  results        String
+  outdoor        Boolean                             @default(false)
+  participants   ParticipantPersonToRitualRelation[]
+  location       Location                            @relation(fields: [locationId], references: [id])
+  tags           TagRelation[]
+  userId         String
+  tarotReading   TarotReading?
+  locationId     String
+  toolRelation   ToolRelation[]
+  toolRelationId String
+}
+
+enum RitualType {
+  TAROT
+  GENERAL
+}
+
+model Tool {
+  id           String         @id @default(uuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  name         String
+  tags         TagRelation[]
+  Ritual       Ritual?        @relation(fields: [ritualId], references: [id])
+  ritualId     String?
+  toolRelation ToolRelation[]
+}
+
+model ToolRelation {
+  rituals  Ritual @relation(fields: [ritualId], references: [id])
+  tool     Tool   @relation(fields: [toolId], references: [id])
+  toolId   String
+  ritualId String
+
+  @@id([toolId, ritualId])
+}
+
+model Location {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String
+  ritual      Ritual[]
+}
+
+model ParticipantPersonToRitualRelation {
+  person   Person @relation(fields: [personId], references: [id])
+  ritual   Ritual @relation(fields: [ritualId], references: [id])
+  personId String
+  ritualId String
+
+  @@id([personId, ritualId])
+}
+
+// Tarot models
+enum TarotSuit {
+  SWORDS
+  WANDS
+  PENTACLES
+  CUPS
+  MAJOR_ARCANA
+}
+
+model TarotReading {
+  id              String          @id @default(uuid())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  querent         Person          @relation(fields: [querentPersonId], references: [id])
+  querentPersonId String
+  ritual          Ritual          @relation(fields: [ritualId], references: [id])
+  spread          TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
+  cardsDrawn      TarotCardDraw[]
+  ritualId        String          @unique
+  tarotSpreadId   String
+}
+
+model TarotSpread {
+  id           String          @id @default(uuid())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  name         String
+  description  String
+  positions    TarotPosition[]
+  tarotReading TarotReading[]
+}
+
+model TarotPosition {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  number        Int
+  description   String
+  tarotSpread   TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
+  tags          TagRelation[]
+  tarotSpreadId String
+  cardDrawn     TarotCardDraw[]
+}
+
+model TarotCardDraw {
+  id              String        @id @default(uuid())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  notes           String?
+  tags            TagRelation[]
+  position        TarotPosition @relation(fields: [tarotPositionId], references: [id])
+  tarotReading    TarotReading  @relation(fields: [tarotReadingId], references: [id])
+  tarotReadingId  String
+  tarotPositionId String        @unique
+}
+
+model TarotCard {
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  name          String
+  suit          TarotSuit
+  number        Int
+  notes         String
+  tags          TagRelation[]
+  tarotDeckCard TarotDeckCard[]
+}
+
+model TarotDeckCard {
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  notes       String
+  card        TarotCard     @relation(fields: [tarotCardId], references: [id])
+  tags        TagRelation[]
+  pictures    String
+  tarotCardId String
+  tarotDeck   TarotDeck     @relation(fields: [tarotDeckId], references: [id])
+  tarotDeckId String
+}
+
+model TarotDeck {
+  id        String          @id @default(uuid())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  name      String
+  notes     String
+  tags      TagRelation[]
+  cards     TarotDeckCard[]
+}
+
+// Utility models
+model Person {
+  id                                String                              @id @default(uuid())
+  name                              String
+  tags                              TagRelation[]
+  tarotReadingsForQuerent           TarotReading[]
+  participantPersonToRitualRelation ParticipantPersonToRitualRelation[]
+}
+
+model Tag {
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  text        String
+  type        String // This is the name of the table this tag is associated with
+  tagRelation TagRelation[]
+}
+
+model TagRelation {
+  id              String         @id @default(uuid()) // id field exists because multi-field IDs must be required
+  tag             Tag            @relation(fields: [tagId], references: [id])
+  tagId           String
+  ritual          Ritual?        @relation(fields: [ritualId], references: [id])
+  ritualId        String?
+  tool            Tool?          @relation(fields: [toolId], references: [id])
+  toolId          String?
+  tarotCardDraw   TarotCardDraw? @relation(fields: [tarotCardDrawId], references: [id])
+  tarotCardDrawId String?
+  tarotCard       TarotCard?     @relation(fields: [tarotCardId], references: [id])
+  tarotCardId     String?
+  tarotDeckCard   TarotDeckCard? @relation(fields: [tarotDeckCardId], references: [id])
+  tarotDeckCardId String?
+  tarotDeck       TarotDeck?     @relation(fields: [tarotDeckId], references: [id])
+  tarotDeckId     String?
+  tarotPosition   TarotPosition? @relation(fields: [tarotPositionId], references: [id])
+  tarotPositionId String?
+  person          Person?        @relation(fields: [personId], references: [id])
+  personId        String?
+}

@@ -26,3 +26,5 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+/prisma/generated/
+/src/server/generated-schema.graphql

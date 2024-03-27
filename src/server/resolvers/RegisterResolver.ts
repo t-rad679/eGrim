@@ -1,15 +1,15 @@
-import {Arg, Ctx, Mutation, Resolver} from "type-graphql";
-import {hashSync} from "bcryptjs"
-import {User} from "../../../prisma/generated/type-graphql";
-import {Context} from "../index";
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
+import { Context } from "../index"
+import { User } from "../../../prisma/generated/type-graphql"
+import { hashSync } from "bcryptjs"
 
 @Resolver()
 export class RegisterResolver {
-    @Mutation(_returns => User, {nullable: false})
+    @Mutation(() => User, { nullable: false })
     async register(
         @Ctx() ctx: Context,
-        @Arg("username", _type => String) username: string,
-        @Arg("password", _type => String) password: string
+        @Arg("username", () => String) username: string,
+        @Arg("password", () => String) password: string
     ): Promise<User> {
         return ctx.prisma.user.create({
             data: {

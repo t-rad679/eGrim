@@ -1,5 +1,5 @@
-import { MiddlewareFn } from "type-graphql"
 import { Context } from "@/server"
+import { MiddlewareFn } from "type-graphql"
 
 export const PopulateUser: MiddlewareFn<Context> = async ({ context }, next) => {
     let user = null

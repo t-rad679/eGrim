@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import cors from "cors"
 import express from "express";
-import { expressjwt } from "express-jwt"
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
 import bodyParser from "body-parser";
@@ -11,24 +10,30 @@ import {PrismaClient, User} from "@prisma/client";
 import {RegisterResolver} from "./resolvers/RegisterResolver";
 import {FindFirstUserResolver, UserRelationsResolver} from "../../prisma/generated/type-graphql";
 import {expressMiddleware} from "@apollo/server/express4";
+import {LoginResolver} from "./resolvers/LoginResolver";
+import cookieSession from "cookie-session";
+import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
+import {PopulateUser} from "./middleware/PopulateUser";
 
 export interface Context {
     prisma: PrismaClient;
-    user?: User
+    req: CookieSessionRequest,
+    user?: User | null,
+    count?: number
 }
 
 const GRAPHQL_PATH = "/graphql"
-
 async function main() {
-    console.log("Testing")
     const schema = await buildSchema({
         resolvers: [
             RegisterResolver,
+            LoginResolver,
             FindFirstUserResolver,
             UserRelationsResolver,
         ],
         emitSchemaFile: path.resolve(__dirname, "./generated-schema.graphql"),
         validate: false,
+        globalMiddlewares: [PopulateUser]
     });
     const prisma = new PrismaClient();
     await prisma.$connect();
@@ -40,11 +45,11 @@ async function main() {
 
     app.use(
         GRAPHQL_PATH,
-        expressjwt({
-            secret: "TypeGraphQL",
-            algorithms: ["HS256"],
-            credentialsRequired: false,
-        }),
+        cookieSession({
+            name: "session",
+            secret: "shhhh",
+            maxAge: 24 * 60 * 60 * 1000 * 365 // 1 year
+        })
     );
     app.use(
         GRAPHQL_PATH,
@@ -57,9 +62,9 @@ async function main() {
         GRAPHQL_PATH,
         bodyParser.json(),
         expressMiddleware(server, {
-            context: async ({ req }) => ({
+            context: async ({ req }: any) => ({
                 prisma,
-                user: (req as any).auth
+                req: req
             })
         })
     )

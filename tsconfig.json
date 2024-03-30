@@ -2,7 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.json",
   "compilerOptions": {
     "target": "es2021",
-    "module": "nodenext",
+    "module": "commonjs",
     "verbatimModuleSyntax": false,
     "declaration": false,
     "sourceMap": false,
@@ -23,7 +23,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
+    "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "plugins": [
       {

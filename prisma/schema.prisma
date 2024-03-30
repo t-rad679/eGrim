@@ -3,9 +3,9 @@ generator client {
 }
 
 generator typegraphql {
-  provider                 = "typegraphql-prisma"
-  omitInputFieldsByDefault = "createdAt,updatedAt"
-  output                   = "generated/type-graphql"
+  provider               = "typegraphql-prisma"
+  output                 = "generated/type-graphql"
+  emitRedundantTypesInfo = true
 }
 
 datasource db {

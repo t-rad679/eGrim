@@ -21,8 +21,6 @@ model User {
   rituals      Ritual[]
   /// @TypeGraphQL.omit(output: true)
   passwordHash String
-  /// @TypeGraphQL.omit(output: true)
-  passwordSalt String
 }
 
 // Ritual models

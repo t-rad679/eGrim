@@ -1,36 +1,80 @@
-import "reflect-metadata";
-import { buildSchema } from "type-graphql";
-import { ApolloServer } from "apollo-server";
-import path from "path";
-import { PrismaClient } from "@prisma/client";
+import "reflect-metadata"
+import { FindFirstUserResolver, UserRelationsResolver } from "../../prisma/generated/type-graphql"
+import { PrismaClient, User } from "@prisma/client"
+import { ApolloServer } from "@apollo/server"
+import { LoginResolver } from "./resolvers/LoginResolver"
+import { PopulateUser } from "./middleware/PopulateUser"
+import { RegisterResolver } from "./resolvers/RegisterResolver"
+import bodyParser from "body-parser"
+import { buildSchema } from "type-graphql"
+import cookieSession from "cookie-session"
+import cors from "cors"
+import express from "express"
+import { expressMiddleware } from "@apollo/server/express4"
+import path from "path"
+import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
 
-import {CreateUserResolver} from "./resolvers/CreateUserResolver";
-import {FindFirstUserResolver, resolvers, UserRelationsResolver} from "../../prisma/generated/type-graphql";
-
-interface Context {
+export interface Context {
     prisma: PrismaClient;
+    req: CookieSessionRequest,
+    user?: User | null,
+    count?: number
 }
+
+const GRAPHQL_PATH = "/graphql"
 
 async function main() {
     const schema = await buildSchema({
         resolvers: [
-            CreateUserResolver,
+            RegisterResolver,
+            LoginResolver,
             FindFirstUserResolver,
             UserRelationsResolver,
         ],
         emitSchemaFile: path.resolve(__dirname, "./generated-schema.graphql"),
         validate: false,
-    });
-
-    const prisma = new PrismaClient();
-    await prisma.$connect();
-
-    const server = new ApolloServer({
+        globalMiddlewares: [PopulateUser]
+    })
+    const prisma = new PrismaClient()
+    await prisma.$connect()
+    const app = express()
+    const server = new ApolloServer<Context>({
         schema,
-        context: (): Context => ({ prisma }),
-    });
-    const { port } = await server.listen(4000);
-    console.log(`GraphQL is listening on ${port}!`);
+    })
+    await server.start()
+
+    app.use(
+        GRAPHQL_PATH,
+        cookieSession({
+            name: "session",
+            secret: "shhhh",
+            maxAge: 24 * 60 * 60 * 1000 * 365 // 1 year
+        })
+    )
+    app.use(
+        GRAPHQL_PATH,
+        cors({
+            origin: ["https://studio.apollographql.com"]
+        })
+    )
+
+    app.use(
+        GRAPHQL_PATH,
+        bodyParser.json(),
+        expressMiddleware(server, {
+            context: async ({ req }: { req: CookieSessionRequest }) => ({
+                prisma,
+                req: req
+            })
+        })
+    )
+    app.use((_, res) => {
+        res.status(404)
+        res.end()
+    })
+
+    await new Promise<void>(resolve => app.listen({ port: 4000 }, resolve))
+    console.log(`GraphQL server ready at http://localhost:4000/${GRAPHQL_PATH}`)
 }
 
-main().catch(console.error);
+main().catch(console.error)

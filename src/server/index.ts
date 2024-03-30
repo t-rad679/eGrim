@@ -39,6 +39,7 @@ async function main() {
     const app = express()
     const server = new ApolloServer<Context>({
         schema,
+        introspection: true
     })
     await server.start()
 
@@ -53,7 +54,7 @@ async function main() {
     app.use(
         GRAPHQL_PATH,
         cors({
-            origin: ["https://studio.apollographql.com"]
+            origin: ["https://studio.apollographql.com", "http://localhost"]
         })
     )
 

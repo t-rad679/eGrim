@@ -6,7 +6,7 @@
     "target": "es2021",
     "module": "commonjs",
     "lib": [
-      "es2018",
+      "es2021",
       "esnext.asynciterable"
     ],
     "experimentalDecorators": true,
@@ -31,7 +31,12 @@
     "express": "^4.19.1",
     "graphql-fields": "^2.0.3",
     "graphql-scalars": "^1.22.2",
+<<<<<<< Updated upstream
     "reflect-metadata": "^0.1.13",
+=======
+    "react": "^18.2.0",
+    "reflect-metadata": "^0.2.2",
+>>>>>>> Stashed changes
     "tslib": "^2.6.0",
     "type-graphql": "^2.0.0-beta.2",
     "vue": "^3.2.47"

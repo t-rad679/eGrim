@@ -2,17 +2,18 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "commonjs",
+    "verbatimModuleSyntax": false,
     "declaration": false,
     "sourceMap": false,
-    "outDir": "./build",
+    "outDir": "./out",
     "moduleResolution": "node",
     "removeComments": true,
     "importHelpers": true,
     "strict": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -21,7 +22,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
+    "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "plugins": [
       {
@@ -45,6 +46,6 @@
       "type-graphql": ["./src/index.ts"]
     }
   },
-  "exclude": ["./node_modules", "./build"],
+  "exclude": ["./node_modules", "./out"],
   "include": ["./src"]
 }

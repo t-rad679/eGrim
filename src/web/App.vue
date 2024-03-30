@@ -1,19 +1,15 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script setup lang="ts">
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="assetsogo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+  <nav>
+    <RouterLink to="/">
+      Register
+    </RouterLink>
+  </nav>
 
   <main>
-    <TheWelcome />
+    <RouterView />
   </main>
 </template>
 

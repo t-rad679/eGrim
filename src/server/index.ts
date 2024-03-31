@@ -1,24 +1,22 @@
 import "reflect-metadata"
-import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
-import { PrismaClient, User } from "@prisma/client"
+import path from "path"
+
 import { ApolloServer } from "@apollo/server"
-import { LoginResolver } from "./resolvers/LoginResolver"
-import { PopulateUser } from "./middleware/PopulateUser"
-import { RegisterResolver } from "./resolvers/RegisterResolver"
+import { expressMiddleware } from "@apollo/server/express4"
+import { PrismaClient } from "@prisma/client"
 import bodyParser from "body-parser"
-import { buildSchema } from "type-graphql"
 import cookieSession from "cookie-session"
 import cors from "cors"
 import express from "express"
-import { expressMiddleware } from "@apollo/server/express4"
-import path from "path"
-import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
+import { buildSchema } from "type-graphql"
 
-export interface Context {
-    prisma: PrismaClient;
-    req: CookieSessionRequest,
-    user?: User | null,
-}
+import { Context } from "@/server/context"
+import { PopulateUser } from "@/server/middleware/PopulateUser"
+import { LoginResolver } from "@/server/resolvers/LoginResolver"
+import { RegisterResolver } from "@/server/resolvers/RegisterResolver"
+import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
+
+import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
 
 const GRAPHQL_PATH = "/graphql"
 

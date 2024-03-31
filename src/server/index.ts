@@ -4,17 +4,17 @@ import path from "path"
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { PrismaClient } from "@prisma/client"
+import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
 import cors from "cors"
 import express from "express"
 import { buildSchema } from "type-graphql"
 
-import { Context } from "@/server/context"
-import { PopulateUser } from "@/server/middleware/PopulateUser"
-import { LoginResolver } from "@/server/resolvers/LoginResolver"
-import { RegisterResolver } from "@/server/resolvers/RegisterResolver"
-import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
+import { Context } from "@/context"
+import { PopulateUser } from "@/middleware/PopulateUser"
+import { LoginResolver } from "@/resolvers/LoginResolver"
+import { RegisterResolver } from "@/resolvers/RegisterResolver"
 
 import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
 

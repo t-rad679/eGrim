@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "paths": {
+      "@/*": ["./*"],
+      "type-graphql": ["./src/index.ts"],
+      "@typegraphql-prisma": ["../../out/type-graphql"]
+    }
+  }
+}

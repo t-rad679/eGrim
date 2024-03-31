@@ -23,7 +23,6 @@
     "migrate": "prisma migrate dev"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.9",
     "@apollo/server": "^4.10.2",
     "@prisma/client": "^5.11.0",
     "@vue/apollo-composable": "^4.0.2",

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-
-import gql from "graphql-tag"
-import { ref } from "vue"
 import { useMutation } from "@vue/apollo-composable"
+import { gql } from "graphql-tag"
+import { ref } from "vue"
 
 const username = ref("")
 const password = ref("")

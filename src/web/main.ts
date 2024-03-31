@@ -1,8 +1,9 @@
 import "./assets/main.css"
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client/core"
-import { createApp, h, provide } from "vue"
-import App from "./App.vue"
 import { DefaultApolloClient } from "@vue/apollo-composable"
+import { createApp, h, provide } from "vue"
+
+import App from "./App.vue"
 import router from "./router"
 
 const httpLink = createHttpLink({

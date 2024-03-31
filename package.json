@@ -25,6 +25,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.2",
     "@prisma/client": "^5.11.0",
+    "@stylistic/eslint-plugin": "^1.7.0",
     "@vue/apollo-composable": "^4.0.2",
     "bcryptjs": "^2.4.3",
     "cookie-session": "^2.1.0",

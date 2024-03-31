@@ -27,7 +27,7 @@ onDone((result) => {
 function register() {
     registerMutation({
         user: username.value,
-        pass: password.value
+        pass: password.value,
     })
 }
 </script>

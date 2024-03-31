@@ -43,7 +43,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "type-graphql": ["./src/index.ts"]
+      "type-graphql": ["./src/index.ts"],
+      "@out/*": ["./out/*"],
+      "@typegraphql-prisma": ["./out/type-graphql"]
     }
   },
   "exclude": ["./node_modules", "./out"],

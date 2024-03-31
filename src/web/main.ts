@@ -3,8 +3,9 @@ import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client/core
 import { DefaultApolloClient } from "@vue/apollo-composable"
 import { createApp, h, provide } from "vue"
 
-import App from "./App.vue"
-import router from "./router"
+import App from "@/web/App.vue"
+import router from "@/web/router/router"
+
 
 const httpLink = createHttpLink({
     uri: "http://localhost:4000/graphql",

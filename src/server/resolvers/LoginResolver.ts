@@ -1,6 +1,6 @@
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
 import { Context } from "@/server"
-import { User } from "../../../prisma/generated/type-graphql"
+import { User } from "@typegraphql-prisma"
 import { compareSync } from "bcryptjs"
 
 @Resolver()

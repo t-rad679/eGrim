@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import { FindFirstUserResolver, UserRelationsResolver } from "../../prisma/generated/type-graphql"
+import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
 import { PrismaClient, User } from "@prisma/client"
 import { ApolloServer } from "@apollo/server"
 import { LoginResolver } from "./resolvers/LoginResolver"
@@ -31,7 +31,7 @@ async function main() {
             FindFirstUserResolver,
             UserRelationsResolver,
         ],
-        emitSchemaFile: path.resolve(__dirname, "./generated-schema.graphql"),
+        emitSchemaFile: path.resolve(__dirname, "../../out/generated-schema.graphql"),
         validate: false,
         globalMiddlewares: [PopulateUser]
     })

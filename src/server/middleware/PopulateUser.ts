@@ -9,8 +9,6 @@ export const PopulateUser: MiddlewareFn<Context> = async ({ context }, next) => 
         })
     }
     context.user = user
-    if (context.count === undefined) {
-        context.count = 0
-    }
+
     return next()
 }

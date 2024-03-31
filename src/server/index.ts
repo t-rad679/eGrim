@@ -18,7 +18,6 @@ export interface Context {
     prisma: PrismaClient;
     req: CookieSessionRequest,
     user?: User | null,
-    count?: number
 }
 
 const GRAPHQL_PATH = "/graphql"

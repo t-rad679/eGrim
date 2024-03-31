@@ -18,9 +18,15 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   username     String   @unique
+  role         Role     @default(USER)
   rituals      Ritual[]
   /// @TypeGraphQL.omit(output: true)
   passwordHash String
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 // Ritual models

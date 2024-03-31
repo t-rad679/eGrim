@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import gql from "graphql-tag"
 import { ref } from "vue"
 import { useMutation } from "@vue/apollo-composable"
@@ -10,10 +11,9 @@ const userData = ref({
     id: "",
 })
 
-
-const { mutate: registerMutation, onDone, error } = useMutation(gql`
-    mutation register($user: String!, $pass: String!) {
-        register(username: $user, password: $pass) {
+const { mutate: loginMutation, onDone, error } = useMutation(gql`
+    mutation login($user: String!, $pass: String!) {
+        login(username: $user, password: $pass) {
             id
             username
         }
@@ -21,19 +21,19 @@ const { mutate: registerMutation, onDone, error } = useMutation(gql`
 `)
 
 onDone((result) => {
-    userData.value = result.data
+    userData.value = result.data.login
 })
 
-function register() {
-    registerMutation({
+function login() {
+    loginMutation({
         user: username.value,
-        pass: password.value
+        pass: password.value,
     })
 }
 </script>
 
 <template>
-  <h1>Register</h1>
+  <h1>Login</h1>
   <p>
     Username
   </p>
@@ -43,8 +43,8 @@ function register() {
   </p>
   <input v-model="password">
   <p>
-    <button @click="register">
-      Register
+    <button @click="login">
+      Login
     </button>
   </p>
   <p v-if="userData">

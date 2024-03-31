@@ -3,8 +3,11 @@
 
 <template>
   <nav>
-    <RouterLink to="/">
+    <RouterLink to="/register">
       Register
+    </RouterLink>
+    <RouterLink to="/login">
+      Login
     </RouterLink>
   </nav>
 

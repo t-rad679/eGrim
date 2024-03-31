@@ -1,4 +1,4 @@
-import { Context } from "@/server"
+import { Context } from "../index"
 import { MiddlewareFn } from "type-graphql"
 
 export const PopulateUser: MiddlewareFn<Context> = async ({ context }, next) => {

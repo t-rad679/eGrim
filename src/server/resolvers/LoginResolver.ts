@@ -1,5 +1,5 @@
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql"
-import { Context } from "@/server"
+import { Context } from "../index"
 import { User } from "@typegraphql-prisma"
 import { compareSync } from "bcryptjs"
 
@@ -22,6 +22,8 @@ export class LoginResolver {
         if (!compareSync(password, user.passwordHash)) {
             return null
         }
+
+        ctx.req.session!.userId = user.id
 
         return user
     }

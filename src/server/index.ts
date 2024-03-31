@@ -54,7 +54,7 @@ async function main() {
     app.use(
         GRAPHQL_PATH,
         cors({
-            origin: true
+            origin: ["https://studio.apollographql.com", "http://localhost:5173"]
         })
     )
 

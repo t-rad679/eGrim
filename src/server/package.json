@@ -2,6 +2,8 @@
   "name": "@egrim/server",
   "version": "0.0.0",
   "description": "Backend for the electronic grimoire",
+  "module": "commonjs",
+  "type": "commonjs",
   "dependencies": {
     "@apollo/server": "^4.10.2",
     "bcryptjs": "^2.4.3",
@@ -14,6 +16,7 @@
     "typescript-vue-plugin": "^1.8.27"
   },
   "devDependencies": {
+    "@prisma/client": "^5.11.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-session": "^2.0.48",
     "@types/cors": "^2.8.17",

@@ -45,7 +45,7 @@ async function main() {
         GRAPHQL_PATH,
         cookieSession({
             name: "session",
-            secret: "shhhh",
+            secret: process.env.AUTH_SECRET,
             maxAge: 24 * 60 * 60 * 1000 * 365, // 1 year
             httpOnly: true,
         }),

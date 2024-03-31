@@ -10,7 +10,7 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://tradical@localhost:5432/egrim"
+  url      = env("DATABASE_URL")
 }
 
 model User {

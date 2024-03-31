@@ -4,7 +4,6 @@
   "private": true,
   "compilerOptions": {
     "target": "es2021",
-    "module": "commonjs",
     "lib": [
       "es2021",
       "esnext.asynciterable"
@@ -22,6 +21,10 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev"
   },
+  "workspaces": [
+    "src/server",
+    "src/web"
+  ],
   "dependencies": {
     "@apollo/server": "^4.10.2",
     "@prisma/client": "^5.11.0",

@@ -30,14 +30,14 @@ async function main() {
         ],
         emitSchemaFile: path.resolve(__dirname, "../../out/generated-schema.graphql"),
         validate: false,
-        globalMiddlewares: [PopulateUser]
+        globalMiddlewares: [PopulateUser],
     })
     const prisma = new PrismaClient()
     await prisma.$connect()
     const app = express()
     const server = new ApolloServer<Context>({
         schema,
-        introspection: true
+        introspection: true,
     })
     await server.start()
 
@@ -46,14 +46,15 @@ async function main() {
         cookieSession({
             name: "session",
             secret: "shhhh",
-            maxAge: 24 * 60 * 60 * 1000 * 365 // 1 year
-        })
+            maxAge: 24 * 60 * 60 * 1000 * 365, // 1 year
+            httpOnly: true,
+        }),
     )
     app.use(
         GRAPHQL_PATH,
         cors({
-            origin: ["https://studio.apollographql.com", "http://localhost:5173"]
-        })
+            origin: ["https://studio.apollographql.com", "http://localhost:5173"],
+        }),
     )
 
     app.use(
@@ -62,9 +63,9 @@ async function main() {
         expressMiddleware(server, {
             context: async ({ req }: { req: CookieSessionRequest }) => ({
                 prisma,
-                req: req
-            })
-        })
+                req: req,
+            }),
+        }),
     )
     app.use((_, res) => {
         res.status(404)

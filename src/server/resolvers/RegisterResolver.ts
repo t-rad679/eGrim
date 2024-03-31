@@ -10,13 +10,13 @@ export class RegisterResolver {
     async register(
         @Ctx() ctx: Context,
         @Arg("username", () => String) username: string,
-        @Arg("password", () => String) password: string
+        @Arg("password", () => String) password: string,
     ): Promise<User> {
         return ctx.prisma.user.create({
             data: {
                 username: username,
                 passwordHash: hashSync(password, 8),
-            }
+            },
         })
     }
 }

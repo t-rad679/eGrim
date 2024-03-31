@@ -10,10 +10,10 @@ export class LoginResolver {
     async login(
         @Ctx() ctx: Context,
         @Arg("username", () => String) username: string,
-        @Arg("password", () => String) password: string
+        @Arg("password", () => String) password: string,
     ): Promise<User | null | undefined> {
         const user = await ctx.prisma.user.findUnique({
-            where: { username }
+            where: { username },
         })
 
         if (!user) {

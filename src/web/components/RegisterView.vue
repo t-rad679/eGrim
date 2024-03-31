@@ -21,7 +21,7 @@ const { mutate: registerMutation, onDone, error } = useMutation(gql`
 `)
 
 onDone((result) => {
-    userData.value = result.data
+    userData.value = result.data.register
 })
 
 function register() {

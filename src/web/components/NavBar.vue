@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { Routes } from "@/router/routes"
+import { Route, getRouteData } from "@/router/route"
 </script>
 
 <template>
@@ -13,7 +13,7 @@ import { Routes } from "@/router/routes"
       </v-col>
       <v-col>
         <router-link
-          :to="Routes.REGISTER"
+          :to="getRouteData(Route.REGISTER).path"
           tag="v-btn"
         >
           <v-btn>
@@ -21,7 +21,7 @@ import { Routes } from "@/router/routes"
           </v-btn>
         </router-link>
         <router-link
-          :to="Routes.LOGIN"
+          :to="getRouteData(Route.LOGIN).path"
           tag="v-btn"
         >
           <v-btn>

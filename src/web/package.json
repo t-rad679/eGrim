@@ -21,6 +21,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "lint": "eslint --ext .ts *.ts **/*.ts",
+    "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts",
     "preview": "vite preview"
   },
   "author": "tradical"

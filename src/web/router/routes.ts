@@ -1,5 +1,5 @@
-import LoginView from "@/web/components/LoginView.vue"
-import RegisterView from "@/web/components/RegisterView.vue"
+import LoginView from "@/components/LoginView.vue"
+import RegisterView from "@/components/RegisterView.vue"
 
 export enum Routes {
     REGISTER = "/register",

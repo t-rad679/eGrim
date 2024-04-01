@@ -4,7 +4,7 @@ generator client {
 
 generator typegraphql {
   provider               = "typegraphql-prisma"
-  output                 = "../out/type-graphql"
+  output                 = "../../../out/type-graphql"
   emitRedundantTypesInfo = true
 }
 

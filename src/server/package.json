@@ -28,7 +28,9 @@
   "scripts": {
     "start": "ts-node index.ts",
     "generate": "prisma generate",
-    "migrate": "prisma migrate dev"
+    "migrate": "prisma migrate dev",
+    "lint": "eslint --ext .ts *.ts **/*.ts",
+    "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts"
   },
   "author": "tradical"
 }

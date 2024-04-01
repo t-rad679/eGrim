@@ -10,9 +10,10 @@ const userData = ref({
     id: "",
 })
 
-const { mutate: loginMutation, onDone, error } = useMutation(gql`
-    mutation login($user: String!, $pass: String!) {
-        login(username: $user, password: $pass) {
+
+const { mutate: registerMutation, onDone, error } = useMutation(gql`
+    mutation register($user: String!, $pass: String!) {
+        register(username: $user, password: $pass) {
             id
             username
         }
@@ -20,11 +21,11 @@ const { mutate: loginMutation, onDone, error } = useMutation(gql`
 `)
 
 onDone((result) => {
-    userData.value = result.data.login
+    userData.value = result.data.register
 })
 
-function login() {
-    loginMutation({
+function register() {
+    registerMutation({
         user: username.value,
         pass: password.value,
     })
@@ -32,19 +33,19 @@ function login() {
 </script>
 
 <template>
-  <h1>Login</h1>
+  <h1>Register</h1>
+  <v-text-field
+    v-model="username"
+    label="Username"
+  />
+  <v-text-field
+    v-model="password"
+    label="Password"
+  />
   <p>
-    Username
-  </p>
-  <input v-model="username">
-  <p>
-    Password
-  </p>
-  <input v-model="password">
-  <p>
-    <button @click="login">
-      Login
-    </button>
+    <v-btn @click="register">
+      Register
+    </v-btn>
   </p>
   <p v-if="userData">
     {{ userData }}

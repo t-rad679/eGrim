@@ -1,46 +1,36 @@
 <script setup lang="ts">
+import { Routes, routes } from "@/router/routes"
 </script>
 
 <template>
-  <nav>
-    <RouterLink to="/register">
-      Register
-    </RouterLink>
-    <RouterLink to="/login">
-      Login
-    </RouterLink>
-  </nav>
-
-  <main>
-    <RouterView />
-  </main>
+  <v-app>
+    <v-app-bar>
+      <v-row class="text-right">
+        <v-list nav>
+          <v-col>
+            <router-link
+              :to="Routes.REGISTER"
+              tag="v-btn"
+            >
+              <v-btn>
+                Register
+              </v-btn>
+            </router-link>
+            <router-link
+              :to="Routes.LOGIN"
+              tag="v-btn"
+            >
+              <v-btn>
+                Login
+              </v-btn>
+            </router-link>
+          </v-col>
+        </v-list>
+      </v-row>
+    </v-app-bar>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

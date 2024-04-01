@@ -25,8 +25,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint": "eslint --ext .ts *.ts **/*.ts",
-    "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts",
+    "lint": "eslint *.ts **/*.ts App.vue **/*.vue",
+    "lint-fix": "eslint --fix *.ts **/*.ts App.vue **/*.vue",
     "preview": "vite preview"
   },
   "author": "tradical"

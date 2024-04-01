@@ -4,9 +4,10 @@ import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
 
 interface RouteData {
+    title: Route,
     path: string,
     component: Component,
-    title: Route,
+    keyName: string,
 }
 
 export enum Route {
@@ -16,9 +17,9 @@ export enum Route {
 }
 
 export const routes: RouteData[] = [
-    { path: "/", component: RegisterView, title: Route.HOME },
-    { path: "/register", component: RegisterView, title: Route.REGISTER },
-    { path: "/login", component: LoginView , title: Route.LOGIN },
+    { path: "/", component: RegisterView, title: Route.HOME , keyName: "" },
+    { path: "/register", component: RegisterView, title: Route.REGISTER, keyName: "register" },
+    { path: "/login", component: LoginView , title: Route.LOGIN, keyName: "login" },
 ]
 
 export function getRouteData(route: Route): RouteData {

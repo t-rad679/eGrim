@@ -1,4 +1,3 @@
-import "./assets/main.css"
 import "vuetify/styles"
 
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client/core"

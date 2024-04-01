@@ -7,5 +7,6 @@ newConfig.env.browser = true
 newConfig.parserOptions.sourceType = "module"
 newConfig.parserOptions.project = ["./tsconfig.json"]
 newConfig.parserOptions.tsconfigRootDir = __dirname
+newConfig.parserOptions.extraFileExtensions = [".vue"]
 
 module.exports = newConfig

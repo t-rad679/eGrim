@@ -13,18 +13,18 @@ import { Route, getRouteData } from "@/router/route"
       </v-col>
       <v-col>
         <router-link
+          v-slot="{ navigate }"
           :to="getRouteData(Route.REGISTER).path"
-          tag="v-btn"
         >
-          <v-btn>
+          <v-btn @click="navigate">
             Register
           </v-btn>
         </router-link>
         <router-link
+          v-slot="{ navigate }"
           :to="getRouteData(Route.LOGIN).path"
-          tag="v-btn"
         >
-          <v-btn>
+          <v-btn @click="navigate">
             Login
           </v-btn>
         </router-link>

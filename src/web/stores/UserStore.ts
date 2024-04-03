@@ -21,7 +21,9 @@ export const useUserStore = defineStore("user", () => {
     }
 })
 
-function setupLoginAction(user: Ref<DeepPartial<User>>): Function {
+type loginOrRegisterFn = (username: string, password: string) => void
+
+function setupLoginAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
     const loginMutationText = gql`
         mutation login($user: String!, $pass: String!) {
             login(username: $user, password: $pass) {
@@ -31,26 +33,24 @@ function setupLoginAction(user: Ref<DeepPartial<User>>): Function {
         }
     `
     const {
-        mutate: loginMutation,
-        onDone: loginOnDone,
-        onError: loginOnError,
+        mutate,
+        onDone,
+        onError,
     } = useMutation(loginMutationText)
 
     async function login(username: string, password: string) {
-        console.log("executing login")
-        await loginMutation({
+        await mutate({
             user: username,
             pass: password,
         })
     }
 
-    loginOnDone((result) => {
-        console.log("executing loginOnDone")
+    onDone((result) => {
         user.value = result.data.login
         localStorage.setItem("user", JSON.stringify(user.value))
     })
 
-    loginOnError((error) => {
+    onError((error) => {
         console.log(`Failed to log in: ${error.message}`)
         // TODO: Make a tooltip pop up
         // https://github.com/cornflourblue/vue-3-pinia-registration-login-example/blob/master/src/stores/alert.store.js
@@ -60,7 +60,7 @@ function setupLoginAction(user: Ref<DeepPartial<User>>): Function {
     return login
 }
 
-function setupRegisterAction(user: Ref<DeepPartial<User>>): Function {
+function setupRegisterAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
     const registerMutationText = gql`
         mutation register($user: String!, $pass: String!) {
             register(username: $user, password: $pass) {
@@ -70,25 +70,24 @@ function setupRegisterAction(user: Ref<DeepPartial<User>>): Function {
         }
     `
     const {
-        mutate: registerMutation,
-        onDone: registerOnDone,
-        onError: registerOnError,
+        mutate,
+        onDone,
+        onError,
     } = useMutation(registerMutationText)
 
     async function register(username: string, password: string) {
-        console.log("executing register")
-        await registerMutation({
+        await mutate({
             user: username,
             pass: password,
         })
     }
 
-    registerOnDone((result => {
+    onDone((result => {
         user.value = result.data.register
         localStorage.setItem("user", JSON.stringify(user.value))
     }))
 
-    registerOnError((error) => {
+    onError((error) => {
         console.log(`Failed to register: ${error.message}`)
         // TODO: Tooltip
     })

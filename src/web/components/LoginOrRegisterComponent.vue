@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable"
-import { gql } from "graphql-tag"
 import { ref } from "vue"
 
-import { Route, getRouteData } from "@/router/route"
+import { Route } from "@/router/route"
 import { useUserStore } from "@/stores/UserStore"
 
 const username = ref("")
 const password = ref("")
-const userData = ref({
-    username: "",
-    id: "",
-})
 
 const props = defineProps({
-    title: String,
+    title: {
+        type: String,
+        required: true,
+    },
 })
 
 const userStore = useUserStore()

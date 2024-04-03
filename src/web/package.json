@@ -13,6 +13,8 @@
     "vuetify": "^3.5.13"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.6",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@vitejs/plugin-vue": "^4.0.0",
@@ -23,11 +25,12 @@
     "vite-plugin-vuetify": "^2.0.3"
   },
   "scripts": {
-    "build": "vite build",
-    "dev": "vite",
+    "build": "npm run generate-types && vite build",
+    "dev": "npm run generate-types && vite",
+    "generate-types": "graphql-codegen --config gentypes.yml",
     "lint": "eslint *.ts **/*.ts App.vue **/*.vue",
     "lint-fix": "eslint --fix *.ts **/*.ts App.vue **/*.vue",
-    "preview": "vite preview"
+    "preview": "npm run generate-types && vite preview"
   },
   "author": "tradical"
 }

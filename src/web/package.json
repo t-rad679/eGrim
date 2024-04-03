@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "@vue/apollo-composable": "^4.0.2",
+    "pinia": "^2.1.7",
     "react": "^18.2.0",
     "vue": "^3.3.0",
     "vue-demi": "^0.14.7",

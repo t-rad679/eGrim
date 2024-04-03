@@ -4,6 +4,7 @@ import { gql } from "graphql-tag"
 import { ref } from "vue"
 
 import { Route, getRouteData } from "@/router/route"
+import { useUserStore } from "@/stores/UserStore"
 
 const username = ref("")
 const password = ref("")
@@ -16,39 +17,19 @@ const props = defineProps({
     title: String,
 })
 
-// We write both mutations out in full to get IDE integration with gql
-let loginMutation = gql`
-    mutation login($user: String!, $pass: String!) {
-        login(username: $user, password: $pass) {
-            id
-            username
-        }
-    }
-`
-const registerMutation = gql`
-    mutation register($user: String!, $pass: String!) {
-        register(username: $user, password: $pass) {
-            id
-            username
-        }
-    }
-`
-const routeData = getRouteData(props.title as Route)
-const { mutate, onDone, error } = useMutation(
-    routeData.title === props.title ?
-        loginMutation:
-        registerMutation,
-)
+const userStore = useUserStore()
 
-onDone((result) => {
-    userData.value = result.data[routeData.keyName]
-})
+function onSubmit() {
+    console.log("executing onSubmit")
+    console.log(props.title)
+    if(props.title === Route.LOGIN) {
+        userStore.login(username.value, password.value)
+    } else if(props.title === Route.REGISTER) {
+        userStore.register(username.value, password.value)
+    } else {
+        throw new Error("Invalid title for this component")
+    }
 
-function executeMutation() {
-    mutate({
-        user: username.value,
-        pass: password.value,
-    })
 }
 
 const usernameRules = [
@@ -65,7 +46,7 @@ const passwordRules = [
   <h2>{{ title }}</h2>
   <v-form
     validate-on="blur"
-    @submit.prevent="executeMutation"
+    @submit.prevent="onSubmit"
   >
     <v-text-field
       v-model="username"
@@ -83,10 +64,7 @@ const passwordRules = [
       </v-btn>
     </p>
   </v-form>
-  <p v-if="userData">
-    {{ userData }}
-  </p>
-  <p v-if="error">
-    {{ error }}
+  <p v-if="userStore.user">
+    {{ userStore.user }}
   </p>
 </template>

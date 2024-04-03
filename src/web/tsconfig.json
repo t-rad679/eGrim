@@ -4,6 +4,7 @@
     "module": "nodenext",
     "paths": {
       "@/*": ["./*"],
+      "@client-types": ["../../out/client_types.ts"],
     }
   }
 }

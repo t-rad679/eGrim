@@ -1,0 +1,5 @@
+schema: "../../out/generated-schema.graphql"
+generates:
+  ../../out/client_types.ts:
+    plugins:
+      - "typescript"

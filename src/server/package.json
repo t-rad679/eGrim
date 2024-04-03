@@ -27,7 +27,8 @@
   },
   "scripts": {
     "start": "ts-node index.ts",
-    "generate": "prisma generate",
+    "generate-prisma": "prisma generate",
+    "generate-schema": "ts-node index.ts -- --generate_only",
     "migrate": "prisma migrate dev",
     "lint": "eslint --ext .ts *.ts **/*.ts",
     "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts"

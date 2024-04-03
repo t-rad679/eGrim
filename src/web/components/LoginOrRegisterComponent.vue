@@ -17,7 +17,6 @@ const props = defineProps({
 const userStore = useUserStore()
 
 function onSubmit() {
-    console.log("executing onSubmit")
     console.log(props.title)
     if(props.title === Route.LOGIN) {
         userStore.login(username.value, password.value)
@@ -26,15 +25,14 @@ function onSubmit() {
     } else {
         throw new Error("Invalid title for this component")
     }
-
 }
 
 const usernameRules = [
-    (value: string) => (value ? true : "Please provide a username"),
+    (value: string) => (value ? true : "Username is required"),
 ]
 
 const passwordRules = [
-    (value: string) => (value.length > 0 ? true : "Please provide a password"),
+    (value: string) => (value.length > 0 ? true : "Password is required"),
     (value: string) => (value.length <= 64 ? true : "Password must be less than or equal to 64 characters"),
 ]
 </script>
@@ -52,6 +50,7 @@ const passwordRules = [
     />
     <v-text-field
       v-model="password"
+      type="password"
       :rules="passwordRules"
       label="Password"
     />

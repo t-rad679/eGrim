@@ -38,11 +38,11 @@ model Ritual {
   type           RitualType
   description    String
   date           DateTime
-  moonPhase      Decimal
+  moonPhase      Decimal? // If this is null, the API we use to fetch it has failed and we should throw an error
   tools          Tool[]
   pictures       String[]
   notes          String?
-  results        String
+  results        String?
   outdoor        Boolean                             @default(false)
   participants   ParticipantPersonToRitualRelation[]
   location       Location                            @relation(fields: [locationId], references: [id])

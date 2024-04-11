@@ -38,11 +38,13 @@ const passwordRules = [
 </script>
 
 <template>
-  <h2>{{ title }}</h2>
   <v-form
     validate-on="blur"
+    class="w-50"
     @submit.prevent="onSubmit"
   >
+    <h2>{{ title }}</h2>
+
     <v-text-field
       v-model="username"
       :rules="usernameRules"

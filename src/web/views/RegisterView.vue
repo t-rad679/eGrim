@@ -5,5 +5,7 @@ import { Route } from "@/router/route"
 </script>
 
 <template>
-  <LoginOrRegisterComponent :title="Route.REGISTER" />
+  <LoginOrRegisterComponent
+    :title="Route.REGISTER"
+  />
 </template>

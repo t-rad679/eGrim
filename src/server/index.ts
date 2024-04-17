@@ -4,7 +4,7 @@ import path from "path"
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { PrismaClient } from "@prisma/client"
-import { FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
+import { CreateOneLocationResolver, FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
 import cors from "cors"
@@ -27,6 +27,7 @@ async function main() {
             LoginResolver,
             FindFirstUserResolver,
             UserRelationsResolver,
+            CreateOneLocationResolver,
         ],
         emitSchemaFile: path.resolve(__dirname, "../../out/generated-schema.graphql"),
         validate: false,

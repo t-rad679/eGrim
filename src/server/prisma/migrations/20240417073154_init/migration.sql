@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+
+-- CreateEnum
 CREATE TYPE "RitualType" AS ENUM ('TAROT', 'GENERAL');
 
 -- CreateEnum
@@ -10,6 +13,7 @@ CREATE TABLE "User" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "username" TEXT NOT NULL,
+    "role" "Role"[] DEFAULT ARRAY['USER']::"Role"[],
     "passwordHash" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -23,10 +27,10 @@ CREATE TABLE "Ritual" (
     "type" "RitualType" NOT NULL,
     "description" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "moonPhase" DECIMAL(65,30) NOT NULL,
+    "moonPhase" DECIMAL(65,30),
     "pictures" TEXT[],
     "notes" TEXT,
-    "results" TEXT NOT NULL,
+    "results" TEXT,
     "outdoor" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
     "locationId" TEXT NOT NULL,
@@ -60,7 +64,10 @@ CREATE TABLE "Location" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
+    "city" TEXT NOT NULL DEFAULT 'Atlanta',
+    "state" TEXT NOT NULL DEFAULT 'GA',
+    "country" TEXT NOT NULL DEFAULT 'USA',
+    "description" TEXT,
 
     CONSTRAINT "Location_pkey" PRIMARY KEY ("id")
 );

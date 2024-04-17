@@ -17,7 +17,6 @@ const props = defineProps({
 const userStore = useUserStore()
 
 function onSubmit() {
-    console.log(props.title)
     if(props.title === Route.LOGIN) {
         userStore.login(username.value, password.value)
     } else if(props.title === Route.REGISTER) {

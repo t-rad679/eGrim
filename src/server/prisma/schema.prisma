@@ -3,9 +3,11 @@ generator client {
 }
 
 generator typegraphql {
-  provider               = "typegraphql-prisma"
-  output                 = "../../../out/type-graphql"
-  emitRedundantTypesInfo = true
+  provider                  = "typegraphql-prisma"
+  output                    = "../../../out/type-graphql"
+  omitInputFieldsByDefault  = ["id", "createdAt", "updatedAt", "moonPhase"]
+  omitOutputFieldsByDefault = ["passwordHash"]
+  emitRedundantTypesInfo    = true
 }
 
 datasource db {
@@ -20,7 +22,6 @@ model User {
   username     String   @unique
   role         Role[]   @default([USER])
   rituals      Ritual[]
-  /// @TypeGraphQL.omit(output: true)
   passwordHash String
 }
 
@@ -84,7 +85,10 @@ model Location {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   name        String
-  description String
+  city        String   @default("Atlanta")
+  state       String   @default("GA")
+  country     String   @default("USA")
+  description String?
   ritual      Ritual[]
 }
 

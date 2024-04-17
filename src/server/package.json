@@ -6,6 +6,7 @@
   "type": "commonjs",
   "dependencies": {
     "@apollo/server": "^4.10.2",
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",

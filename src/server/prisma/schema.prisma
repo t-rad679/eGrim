@@ -89,6 +89,7 @@ model Location {
   state       String   @default("GA")
   country     String   @default("USA")
   description String?
+  // TODO: Add tags
   ritual      Ritual[]
 }
 

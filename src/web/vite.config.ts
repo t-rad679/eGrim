@@ -13,6 +13,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "."),
+            "@client-types": path.resolve(__dirname, "../../out/client_types.ts"),
         },
     },
     cacheDir: "../../node_modules",

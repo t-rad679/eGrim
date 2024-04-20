@@ -20,7 +20,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   username     String   @unique
-  role         Role[]   @default([USER])
+  roles        Role[]   @default([USER])
   rituals      Ritual[]
   passwordHash String
 }
@@ -38,21 +38,25 @@ model Ritual {
   user           User                                @relation(fields: [userId], references: [id])
   type           RitualType
   description    String
+  // TODO: Consider making steps a model, but I'm not sure what I would put in there
+  steps          String[]
   date           DateTime
-  moonPhase      Decimal? // If this is null, the API we use to fetch it has failed and we should throw an error
-  tools          Tool[]
+  // TODO: Consider adding more astrological data?
+  moonPhase      Decimal // If this is null, the API we use to fetch it has failed and we should throw an error
   pictures       String[]
   notes          String?
-  results        String?
+  results        RitualResults                       @relation(fields: [resultsId], references: [id])
   outdoor        Boolean                             @default(false)
+  // TODO: validate that user, querent and reader are in participants for tarot readings
   participants   ParticipantPersonToRitualRelation[]
   location       Location                            @relation(fields: [locationId], references: [id])
   tags           TagRelation[]
   userId         String
   tarotReading   TarotReading?
   locationId     String
-  toolRelation   ToolRelation[]
+  toolRelation   ToolToRitualRelation[]
   toolRelationId String
+  resultsId      String
 }
 
 enum RitualType {
@@ -61,35 +65,45 @@ enum RitualType {
 }
 
 model Tool {
-  id           String         @id @default(uuid())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id           String                 @id @default(uuid())
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
   name         String
   tags         TagRelation[]
-  Ritual       Ritual?        @relation(fields: [ritualId], references: [id])
-  ritualId     String?
-  toolRelation ToolRelation[]
+  toolRelation ToolToRitualRelation[]
 }
 
-model ToolRelation {
-  rituals  Ritual @relation(fields: [ritualId], references: [id])
-  tool     Tool   @relation(fields: [toolId], references: [id])
-  toolId   String
-  ritualId String
+model ToolToRitualRelation {
+  ritual           Ritual                                @relation(fields: [ritualId], references: [id])
+  tool             Tool                                  @relation(fields: [toolId], references: [id])
+  wieldersRelation WielderPersonToToolRelationRelation[]
+  toolId           String
+  ritualId         String
 
   @@id([toolId, ritualId])
 }
 
+model WielderPersonToToolRelationRelation {
+  toolToRitualRelation         ToolToRitualRelation @relation(fields: [toolToRitualRelationToolId, toolToRitualRelationRitualId], references: [toolId, ritualId])
+  wielder                      Person               @relation(fields: [wielderId], references: [id])
+  toolToRitualRelationToolId   String
+  toolToRitualRelationRitualId String
+  wielderId                    String
+
+  @@id([toolToRitualRelationToolId, toolToRitualRelationRitualId, wielderId])
+}
+
 model Location {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   name        String
-  city        String   @default("Atlanta")
-  state       String   @default("GA")
-  country     String   @default("USA")
+  address     String?
+  city        String        @default("Atlanta")
+  state       String        @default("GA")
+  country     String        @default("USA")
   description String?
-  // TODO: Add tags
+  tags        TagRelation[]
   ritual      Ritual[]
 }
 
@@ -115,8 +129,10 @@ model TarotReading {
   id              String          @id @default(uuid())
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-  querent         Person          @relation(fields: [querentPersonId], references: [id])
+  querent         Person          @relation(name: "QuerentToReadingRelation", fields: [querentPersonId], references: [id])
   querentPersonId String
+  reader          Person          @relation(name: "ReaderToReadingRelation", fields: [readerPersonId], references: [id])
+  readerPersonId  String
   ritual          Ritual          @relation(fields: [ritualId], references: [id])
   spread          TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
   cardsDrawn      TarotCardDraw[]
@@ -195,11 +211,13 @@ model TarotDeck {
 
 // Utility models
 model Person {
-  id                                String                              @id @default(uuid())
-  name                              String
-  tags                              TagRelation[]
-  tarotReadingsForQuerent           TarotReading[]
-  participantPersonToRitualRelation ParticipantPersonToRitualRelation[]
+  id                                  String                                @id @default(uuid())
+  name                                String
+  tags                                TagRelation[]
+  tarotReadingsForQuerent             TarotReading[]                        @relation(name: "QuerentToReadingRelation")
+  tarotReadingsForReader              TarotReading[]                        @relation(name: "ReaderToReadingRelation")
+  participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
+  WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
 }
 
 model Tag {
@@ -231,4 +249,18 @@ model TagRelation {
   tarotPositionId String?
   person          Person?        @relation(fields: [personId], references: [id])
   personId        String?
+  ritualResults   RitualResults? @relation(fields: [ritualResultsId], references: [id])
+  ritualResultsId String?
+  Location        Location?      @relation(fields: [locationId], references: [id])
+  locationId      String?
+}
+
+model RitualResults {
+  id        String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  tags      TagRelation[]
+  success   Boolean
+  notes     String?
+  Ritual    Ritual[]
 }

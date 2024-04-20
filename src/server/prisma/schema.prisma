@@ -22,6 +22,8 @@ model User {
   username     String   @unique
   roles        Role[]   @default([USER])
   rituals      Ritual[]
+  person       Person?  @relation(fields: [personId], references: [id])
+  personId     String?  @unique
   passwordHash String
 }
 
@@ -212,12 +214,15 @@ model TarotDeck {
 // Utility models
 model Person {
   id                                  String                                @id @default(uuid())
+  createdAt                           DateTime                              @default(now())
+  updatedAt                           DateTime                              @updatedAt
   name                                String
   tags                                TagRelation[]
   tarotReadingsForQuerent             TarotReading[]                        @relation(name: "QuerentToReadingRelation")
   tarotReadingsForReader              TarotReading[]                        @relation(name: "ReaderToReadingRelation")
   participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
   WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
+  user                                User?
 }
 
 model Tag {

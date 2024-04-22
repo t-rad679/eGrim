@@ -5,6 +5,9 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 CREATE TYPE "RitualType" AS ENUM ('TAROT', 'GENERAL');
 
 -- CreateEnum
+CREATE TYPE "RitualRole" AS ENUM ('PARTICIPANT', 'LEADER', 'SPECTATOR', 'QUERENT', 'READER');
+
+-- CreateEnum
 CREATE TYPE "TarotSuit" AS ENUM ('SWORDS', 'WANDS', 'PENTACLES', 'CUPS', 'MAJOR_ARCANA');
 
 -- CreateTable
@@ -14,6 +17,7 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "username" TEXT NOT NULL,
     "roles" "Role"[] DEFAULT ARRAY['USER']::"Role"[],
+    "personId" TEXT,
     "passwordHash" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -84,6 +88,7 @@ CREATE TABLE "Location" (
 
 -- CreateTable
 CREATE TABLE "ParticipantPersonToRitualRelation" (
+    "role" "RitualRole" NOT NULL,
     "personId" TEXT NOT NULL,
     "ritualId" TEXT NOT NULL,
 
@@ -95,8 +100,6 @@ CREATE TABLE "TarotReading" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "querentPersonId" TEXT NOT NULL,
-    "readerPersonId" TEXT NOT NULL,
     "ritualId" TEXT NOT NULL,
     "tarotSpreadId" TEXT NOT NULL,
 
@@ -178,6 +181,8 @@ CREATE TABLE "TarotDeck" (
 -- CreateTable
 CREATE TABLE "Person" (
     "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
@@ -227,10 +232,16 @@ CREATE TABLE "RitualResults" (
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_personId_key" ON "User"("personId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "TarotReading_ritualId_key" ON "TarotReading"("ritualId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "TarotCardDraw_tarotPositionId_key" ON "TarotCardDraw"("tarotPositionId");
+CREATE UNIQUE INDEX "Person_name_key" ON "Person"("name");
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Ritual" ADD CONSTRAINT "Ritual_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -258,12 +269,6 @@ ALTER TABLE "ParticipantPersonToRitualRelation" ADD CONSTRAINT "ParticipantPerso
 
 -- AddForeignKey
 ALTER TABLE "ParticipantPersonToRitualRelation" ADD CONSTRAINT "ParticipantPersonToRitualRelation_ritualId_fkey" FOREIGN KEY ("ritualId") REFERENCES "Ritual"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TarotReading" ADD CONSTRAINT "TarotReading_querentPersonId_fkey" FOREIGN KEY ("querentPersonId") REFERENCES "Person"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TarotReading" ADD CONSTRAINT "TarotReading_readerPersonId_fkey" FOREIGN KEY ("readerPersonId") REFERENCES "Person"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TarotReading" ADD CONSTRAINT "TarotReading_ritualId_fkey" FOREIGN KEY ("ritualId") REFERENCES "Ritual"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

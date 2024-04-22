@@ -66,6 +66,15 @@ enum RitualType {
   GENERAL
 }
 
+enum RitualRole {
+  PARTICIPANT
+  LEADER
+  SPECTATOR
+  // Tarot Roles
+  QUERENT
+  READER
+}
+
 model Tool {
   id           String                 @id @default(uuid())
   createdAt    DateTime               @default(now())
@@ -110,8 +119,9 @@ model Location {
 }
 
 model ParticipantPersonToRitualRelation {
-  person   Person @relation(fields: [personId], references: [id])
-  ritual   Ritual @relation(fields: [ritualId], references: [id])
+  person   Person     @relation(fields: [personId], references: [id])
+  ritual   Ritual     @relation(fields: [ritualId], references: [id])
+  role     RitualRole
   personId String
   ritualId String
 
@@ -128,18 +138,14 @@ enum TarotSuit {
 }
 
 model TarotReading {
-  id              String          @id @default(uuid())
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  querent         Person          @relation(name: "QuerentToReadingRelation", fields: [querentPersonId], references: [id])
-  querentPersonId String
-  reader          Person          @relation(name: "ReaderToReadingRelation", fields: [readerPersonId], references: [id])
-  readerPersonId  String
-  ritual          Ritual          @relation(fields: [ritualId], references: [id])
-  spread          TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
-  cardsDrawn      TarotCardDraw[]
-  ritualId        String          @unique
-  tarotSpreadId   String
+  id            String          @id @default(uuid())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  ritual        Ritual          @relation(fields: [ritualId], references: [id])
+  spread        TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
+  cardsDrawn    TarotCardDraw[]
+  ritualId      String          @unique
+  tarotSpreadId String
 }
 
 model TarotSpread {
@@ -173,7 +179,7 @@ model TarotCardDraw {
   position        TarotPosition @relation(fields: [tarotPositionId], references: [id])
   tarotReading    TarotReading  @relation(fields: [tarotReadingId], references: [id])
   tarotReadingId  String
-  tarotPositionId String        @unique
+  tarotPositionId String
 }
 
 model TarotCard {
@@ -216,10 +222,8 @@ model Person {
   id                                  String                                @id @default(uuid())
   createdAt                           DateTime                              @default(now())
   updatedAt                           DateTime                              @updatedAt
-  name                                String
+  name                                String                                @unique
   tags                                TagRelation[]
-  tarotReadingsForQuerent             TarotReading[]                        @relation(name: "QuerentToReadingRelation")
-  tarotReadingsForReader              TarotReading[]                        @relation(name: "ReaderToReadingRelation")
   participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
   WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
   user                                User?

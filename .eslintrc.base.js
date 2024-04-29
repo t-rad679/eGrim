@@ -75,6 +75,13 @@ const config= {
             "error",
             "always-multiline",
         ],
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_",
+            }
+        ]
     },
 }
 

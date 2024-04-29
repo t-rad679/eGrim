@@ -21,9 +21,9 @@ export const useUserStore = defineStore("user", () => {
     }
 })
 
-type loginOrRegisterFn = (username: string, password: string) => void
+type loginFn = (username: string, password: string) => void
 
-function setupLoginAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
+function setupLoginAction(user: Ref<DeepPartial<User>>): loginFn {
     const loginMutationText = gql`
         mutation login($user: String!, $pass: String!) {
             login(username: $user, password: $pass) {
@@ -60,10 +60,12 @@ function setupLoginAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
     return login
 }
 
-function setupRegisterAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
+type registerFn = (username: string, password: string, name?: string) => void
+
+function setupRegisterAction(user: Ref<DeepPartial<User>>): registerFn {
     const registerMutationText = gql`
-        mutation register($user: String!, $pass: String!) {
-            register(username: $user, password: $pass) {
+        mutation register($user: String!, $pass: String!, $name: String!) {
+            register(username: $user, password: $pass, name: $name) {
                 id
                 username
             }
@@ -75,10 +77,11 @@ function setupRegisterAction(user: Ref<DeepPartial<User>>): loginOrRegisterFn {
         onError,
     } = useMutation(registerMutationText)
 
-    async function register(username: string, password: string) {
+    async function register(username: string, password: string, name?: string) {
         await mutate({
             user: username,
             pass: password,
+            name,
         })
     }
 

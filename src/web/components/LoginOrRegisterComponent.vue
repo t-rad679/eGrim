@@ -6,6 +6,7 @@ import { useUserStore } from "@/stores/UserStore"
 
 const username = ref("")
 const password = ref("")
+const name = ref("")
 
 const props = defineProps({
     title: {
@@ -20,7 +21,7 @@ function onSubmit() {
     if(props.title === Route.LOGIN) {
         userStore.login(username.value, password.value)
     } else if(props.title === Route.REGISTER) {
-        userStore.register(username.value, password.value)
+        userStore.register(username.value, password.value, name.value)
     } else {
         throw new Error("Invalid title for this component")
     }
@@ -55,6 +56,12 @@ const passwordRules = [
       :rules="passwordRules"
       label="Password"
     />
+    <p v-if="title === Route.REGISTER">
+      <v-text-field
+        v-model="name"
+        label="Name"
+      />
+    </p>
     <p>
       <v-btn type="submit">
         {{ title }}

@@ -138,6 +138,8 @@ model TagToObjectRelation {
   toolId          String?
   TarotSpread     TarotSpread?   @relation(fields: [tarotSpreadId], references: [id])
   tarotSpreadId   String?
+
+  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 }
 
 // Ritual models
@@ -194,6 +196,8 @@ model ToolToRitualRelation {
 
   wieldersRelation WielderPersonToToolRelationRelation[]
 
+  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
+
   @@id([toolId, ritualId])
 }
 
@@ -204,6 +208,8 @@ model WielderPersonToToolRelationRelation {
 
   wielder              Person               @relation(fields: [wielderId], references: [id])
   toolToRitualRelation ToolToRitualRelation @relation(fields: [toolToRitualRelationToolId, toolToRitualRelationRitualId], references: [toolId, ritualId])
+
+  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 
   @@id([toolToRitualRelationRitualId, toolToRitualRelationToolId, wielderId])
 }
@@ -232,6 +238,8 @@ model TarotReading {
   querentAndReaderRelations TarotQuerentOrReaderPersonRelation[]
   spread                    TarotSpread                          @relation(fields: [spreadId], references: [id])
   spreadId                  String
+
+  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 }
 
 model TarotQuerentOrReaderPersonRelation {

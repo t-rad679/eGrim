@@ -110,6 +110,7 @@ model Tag {
 model TagRelation {
   id String @id @default(uuid()) // id field exists because multi-field IDs must be required
 
+  // TODO: Make a "type" field resolver that calculates which model a particular tag is for
   Event           Event?         @relation(fields: [eventId], references: [id])
   eventId         String?
   Location        Location?      @relation(fields: [locationId], references: [id])

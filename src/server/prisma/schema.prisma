@@ -40,13 +40,13 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  location     Location?     @relation(fields: [locationId], references: [id])
+  location     Location?             @relation(fields: [locationId], references: [id])
   locationId   String?
   ritual       Ritual?
-  tags         TagRelation[]
+  tags         TagToObjectRelation[]
   tarotReading TarotReading?
   type         EventType
-  user         User          @relation(fields: [userId], references: [id])
+  user         User                  @relation(fields: [userId], references: [id])
   userId       String
 
   date        DateTime
@@ -72,7 +72,7 @@ model Location {
   updatedAt DateTime @updatedAt
 
   Event Event[]
-  tags  TagRelation[]
+  tags  TagToObjectRelation[]
 
   address     String?
   city        String  @default("Atlanta")
@@ -87,7 +87,7 @@ model Person {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tags                                TagRelation[]
+  tags                                TagToObjectRelation[]
   participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
   WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
   user                                User?
@@ -101,14 +101,17 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tagRelation TagRelation[]
+  tagToObjectRelations TagToObjectRelation[]
 
   text String
   type String // This is the name of the table this tag is associated with
 }
 
-model TagRelation {
+model TagToObjectRelation {
   id String @id @default(uuid()) // id field exists because multi-field IDs must be required
+
+  tag   Tag    @relation(fields: [tagId], references: [id])
+  tagId String
 
   // TODO: Make a "type" field resolver that calculates which model a particular tag is for
   Event           Event?         @relation(fields: [eventId], references: [id])
@@ -119,8 +122,6 @@ model TagRelation {
   personId        String?
   ritualResults   RitualResults? @relation(fields: [ritualResultsId], references: [id])
   ritualResultsId String?
-  tag             Tag            @relation(fields: [tagId], references: [id])
-  tagId           String
   tarotCard       TarotCard?     @relation(fields: [tarotCardId], references: [id])
   tarotCardId     String?
   tarotCardDraw   TarotCardDraw? @relation(fields: [tarotCardDrawId], references: [id])
@@ -156,14 +157,14 @@ model Ritual {
 }
 
 model RitualResults {
-  id        String        @id @default(uuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  tags      TagRelation[]
+  id        String                @id @default(uuid())
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  tags      TagToObjectRelation[]
   success   Boolean
   notes     String?
-  ritual    Ritual        @relation(fields: [ritualId], references: [id])
-  ritualId  String        @unique
+  ritual    Ritual                @relation(fields: [ritualId], references: [id])
+  ritualId  String                @unique
 }
 
 enum RitualRole {
@@ -177,7 +178,7 @@ model Tool {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tags         TagRelation[]
+  tags         TagToObjectRelation[]
   toolRelation ToolToRitualRelation[]
 
   name String
@@ -253,7 +254,7 @@ model TarotSpread {
   updatedAt DateTime @updatedAt
 
   positions    TarotPosition[]
-  tags         TagRelation[]
+  tags         TagToObjectRelation[]
   tarotReading TarotReading[]
 
   name        String
@@ -266,8 +267,8 @@ model TarotPosition {
   updatedAt DateTime @updatedAt
 
   cardDrawn     TarotCardDraw[]
-  tags          TagRelation[]
-  tarotSpread   TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
+  tags          TagToObjectRelation[]
+  tarotSpread   TarotSpread           @relation(fields: [tarotSpreadId], references: [id])
   tarotSpreadId String
 
   description String
@@ -279,10 +280,10 @@ model TarotCardDraw {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  position       TarotPosition @relation(fields: [positionId], references: [id])
+  position       TarotPosition         @relation(fields: [positionId], references: [id])
   positionId     String
-  tags           TagRelation[]
-  tarotReading   TarotReading  @relation(fields: [tarotReadingId], references: [id])
+  tags           TagToObjectRelation[]
+  tarotReading   TarotReading          @relation(fields: [tarotReadingId], references: [id])
   tarotReadingId String
 
   notes String?
@@ -294,7 +295,7 @@ model TarotCard {
   updatedAt DateTime @updatedAt
 
   suit          TarotSuit
-  tags          TagRelation[]
+  tags          TagToObjectRelation[]
   tarotDeckCard TarotDeckCard[]
 
   name   String
@@ -315,10 +316,10 @@ model TarotDeckCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  card        TarotCard     @relation(fields: [cardId], references: [id])
+  card        TarotCard             @relation(fields: [cardId], references: [id])
   cardId      String
-  tags        TagRelation[]
-  tarotDeck   TarotDeck     @relation(fields: [tarotDeckId], references: [id])
+  tags        TagToObjectRelation[]
+  tarotDeck   TarotDeck             @relation(fields: [tarotDeckId], references: [id])
   tarotDeckId String
 
   notes    String
@@ -330,7 +331,7 @@ model TarotDeck {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tags  TagRelation[]
+  tags  TagToObjectRelation[]
   cards TarotDeckCard[]
 
   name  String

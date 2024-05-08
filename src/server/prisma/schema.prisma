@@ -4,10 +4,10 @@ generator client {
 
 generator typegraphql {
   provider                  = "typegraphql-prisma"
-  output                    = "../../../out/type-graphql"
+  emitRedundantTypesInfo    = true
   omitInputFieldsByDefault  = ["id", "createdAt", "updatedAt", "moonPhase"]
   omitOutputFieldsByDefault = ["passwordHash"]
-  emitRedundantTypesInfo    = true
+  output                    = "../../../out/type-graphql"
 }
 
 datasource db {
@@ -15,58 +15,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Base models
 model User {
-  id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  username     String   @unique
-  roles        Role[]   @default([USER])
-  person       Person?  @relation(fields: [personId], references: [id])
-  personId     String?  @unique
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event    Event[]
+  person   Person? @relation(fields: [personId], references: [id])
+  personId String? @unique
+  roles    Role[]  @default([USER])
+
   passwordHash String
-  Event        Event[]
+  username     String @unique
 }
 
 enum Role {
-  USER
   ADMIN
+  USER
 }
 
 model Event {
-  id           String        @id @default(uuid())
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  date         DateTime
-  description  String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   location     Location?     @relation(fields: [locationId], references: [id])
   locationId   String?
-  // TODO: Consider adding more astrological data?
-  moonPhase    Decimal // If this is null, the API we use to fetch it has failed and we should throw an error
-  notes        String?
-  outdoor      Boolean       @default(false)
-  pictures     String[]
   ritual       Ritual?
   tags         TagRelation[]
   tarotReading TarotReading?
   type         EventType
   user         User          @relation(fields: [userId], references: [id])
   userId       String
-}
 
-// Ritual models
-model Ritual {
-  id             String                              @id @default(uuid())
-  createdAt      DateTime                            @default(now())
-  updatedAt      DateTime                            @updatedAt
-  event          Event                               @relation(fields: [eventId], references: [id])
-  eventId        String                              @unique
-  // TODO: validate that user, querent and reader are in participants for tarot readings
-  participants   ParticipantPersonToRitualRelation[]
-  results        RitualResults?
-  // TODO: Consider making steps a model, but I'm not sure what I would put in there
-  steps          String[]
-  toolRelation   ToolToRitualRelation[]
-  toolRelationId String
+  date        DateTime
+  description String
+  // TODO: Consider adding more astrological data?
+  moonPhase   Decimal // If this is null, the API we use to fetch it has failed and we should throw an error
+  notes       String?
+  outdoor     Boolean  @default(false)
+  pictures    String[]
 }
 
 enum EventType {
@@ -77,87 +66,165 @@ enum EventType {
   GENERAL
 }
 
+model Location {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event Event[]
+  tags  TagRelation[]
+
+  address     String?
+  city        String  @default("Atlanta")
+  country     String  @default("USA")
+  description String?
+  name        String
+  state       String  @default("GA")
+}
+
+model Person {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tags                                TagRelation[]
+  participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
+  WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
+  user                                User?
+  querentOrReaderPersonRelation       TarotQuerentOrReaderPersonRelation[]
+
+  name String @unique
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tagRelation TagRelation[]
+
+  text String
+  type String // This is the name of the table this tag is associated with
+}
+
+model TagRelation {
+  id String @id @default(uuid()) // id field exists because multi-field IDs must be required
+
+  Event           Event?         @relation(fields: [eventId], references: [id])
+  eventId         String?
+  Location        Location?      @relation(fields: [locationId], references: [id])
+  locationId      String?
+  person          Person?        @relation(fields: [personId], references: [id])
+  personId        String?
+  ritualResults   RitualResults? @relation(fields: [ritualResultsId], references: [id])
+  ritualResultsId String?
+  tag             Tag            @relation(fields: [tagId], references: [id])
+  tagId           String
+  tarotCard       TarotCard?     @relation(fields: [tarotCardId], references: [id])
+  tarotCardId     String?
+  tarotCardDraw   TarotCardDraw? @relation(fields: [tarotCardDrawId], references: [id])
+  tarotCardDrawId String?
+  tarotDeck       TarotDeck?     @relation(fields: [tarotDeckId], references: [id])
+  tarotDeckId     String?
+  tarotDeckCard   TarotDeckCard? @relation(fields: [tarotDeckCardId], references: [id])
+  tarotDeckCardId String?
+  tarotPosition   TarotPosition? @relation(fields: [tarotPositionId], references: [id])
+  tarotPositionId String?
+  tool            Tool?          @relation(fields: [toolId], references: [id])
+  toolId          String?
+  TarotSpread     TarotSpread?   @relation(fields: [tarotSpreadId], references: [id])
+  tarotSpreadId   String?
+}
+
+// Ritual models
+model Ritual {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event          Event                               @relation(fields: [eventId], references: [id])
+  eventId        String                              @unique
+  // TODO: validate that user, querent and reader are in participants for tarot readings
+  participants   ParticipantPersonToRitualRelation[]
+  results        RitualResults?
+  toolRelation   ToolToRitualRelation[]
+  toolRelationId String
+
+  // TODO: Consider making steps a model, but I'm not sure what I would put in there
+  steps String[]
+}
+
+model RitualResults {
+  id        String        @id @default(uuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  tags      TagRelation[]
+  success   Boolean
+  notes     String?
+  ritual    Ritual        @relation(fields: [ritualId], references: [id])
+  ritualId  String        @unique
+}
+
 enum RitualRole {
   LEADER
   PARTICIPANT
   SPECTATOR
 }
 
-enum TarotRole {
-  QUERENT
-  READER
-}
-
 model Tool {
-  id           String                 @id @default(uuid())
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
-  name         String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   tags         TagRelation[]
   toolRelation ToolToRitualRelation[]
+
+  name String
 }
 
 model ToolToRitualRelation {
-  ritual           Ritual                                @relation(fields: [ritualId], references: [id])
-  tool             Tool                                  @relation(fields: [toolId], references: [id])
+  ritual   Ritual @relation(fields: [ritualId], references: [id])
+  ritualId String
+  tool     Tool   @relation(fields: [toolId], references: [id])
+  toolId   String
+
   wieldersRelation WielderPersonToToolRelationRelation[]
-  toolId           String
-  ritualId         String
 
   @@id([toolId, ritualId])
 }
 
 model WielderPersonToToolRelationRelation {
-  toolToRitualRelation         ToolToRitualRelation @relation(fields: [toolToRitualRelationToolId, toolToRitualRelationRitualId], references: [toolId, ritualId])
-  wielder                      Person               @relation(fields: [wielderId], references: [id])
-  toolToRitualRelationToolId   String
   toolToRitualRelationRitualId String
+  toolToRitualRelationToolId   String
   wielderId                    String
 
-  @@id([toolToRitualRelationToolId, toolToRitualRelationRitualId, wielderId])
-}
+  wielder              Person               @relation(fields: [wielderId], references: [id])
+  toolToRitualRelation ToolToRitualRelation @relation(fields: [toolToRitualRelationToolId, toolToRitualRelationRitualId], references: [toolId, ritualId])
 
-model Location {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  name        String
-  address     String?
-  city        String        @default("Atlanta")
-  state       String        @default("GA")
-  country     String        @default("USA")
-  description String?
-  Event       Event[]
-  tags        TagRelation[]
+  @@id([toolToRitualRelationRitualId, toolToRitualRelationToolId, wielderId])
 }
 
 model ParticipantPersonToRitualRelation {
-  person   Person     @relation(fields: [personId], references: [id])
-  ritual   Ritual     @relation(fields: [ritualId], references: [id])
-  role     RitualRole
   personId String
   ritualId String
+
+  person Person     @relation(fields: [personId], references: [id])
+  ritual Ritual     @relation(fields: [ritualId], references: [id])
+  role   RitualRole
 
   @@id([personId, ritualId])
 }
 
 // Tarot models
-enum TarotSuit {
-  SWORDS
-  WANDS
-  PENTACLES
-  CUPS
-  MAJOR_ARCANA
-}
-
 model TarotReading {
-  id                        String                               @id @default(uuid())
-  createdAt                 DateTime                             @default(now())
-  updatedAt                 DateTime                             @updatedAt
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   cardsDrawn                TarotCardDraw[]
-  Event                     Event                                @relation(fields: [eventId], references: [id])
+  event                     Event                                @relation(fields: [eventId], references: [id])
   eventId                   String                               @unique
-  // TODO: Validate that both exist in the resolver
+  // TODO: Validate that both exist in the resolver. Make field resolvers for them
   querentAndReaderRelations TarotQuerentOrReaderPersonRelation[]
   spread                    TarotSpread                          @relation(fields: [spreadId], references: [id])
   spreadId                  String
@@ -171,133 +238,100 @@ model TarotQuerentOrReaderPersonRelation {
 
   role TarotRole
 
-  @@id([personId, tarotReadingId, role])
+  @@id([personId, role, tarotReadingId])
+}
+
+enum TarotRole {
+  QUERENT
+  READER
 }
 
 model TarotSpread {
-  id           String          @id @default(uuid())
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  name         String
-  description  String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   positions    TarotPosition[]
+  tags         TagRelation[]
   tarotReading TarotReading[]
+
+  name        String
+  description String
 }
 
 model TarotPosition {
-  id            String          @id @default(uuid())
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  number        Int
-  description   String
-  tarotSpread   TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
-  tags          TagRelation[]
-  tarotSpreadId String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   cardDrawn     TarotCardDraw[]
+  tags          TagRelation[]
+  tarotSpread   TarotSpread     @relation(fields: [tarotSpreadId], references: [id])
+  tarotSpreadId String
+
+  description String
+  number      Int
 }
 
 model TarotCardDraw {
-  id              String        @id @default(uuid())
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  notes           String?
-  tags            TagRelation[]
-  position        TarotPosition @relation(fields: [tarotPositionId], references: [id])
-  tarotReading    TarotReading  @relation(fields: [tarotReadingId], references: [id])
-  tarotReadingId  String
-  tarotPositionId String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  position       TarotPosition @relation(fields: [positionId], references: [id])
+  positionId     String
+  tags           TagRelation[]
+  tarotReading   TarotReading  @relation(fields: [tarotReadingId], references: [id])
+  tarotReadingId String
+
+  notes String?
 }
 
 model TarotCard {
-  id            String          @id @default(uuid())
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  name          String
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   suit          TarotSuit
-  number        Int
-  notes         String
   tags          TagRelation[]
   tarotDeckCard TarotDeckCard[]
+
+  name   String
+  notes  String
+  number Int
+}
+
+enum TarotSuit {
+  CUPS
+  PENTACLES
+  SWORDS
+  WANDS
+  MAJOR_ARCANA
 }
 
 model TarotDeckCard {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  notes       String
-  card        TarotCard     @relation(fields: [tarotCardId], references: [id])
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  card        TarotCard     @relation(fields: [cardId], references: [id])
+  cardId      String
   tags        TagRelation[]
-  pictures    String
-  tarotCardId String
   tarotDeck   TarotDeck     @relation(fields: [tarotDeckId], references: [id])
   tarotDeckId String
+
+  notes    String
+  pictures String
 }
 
 model TarotDeck {
-  id        String          @id @default(uuid())
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  name      String
-  notes     String
-  tags      TagRelation[]
-  cards     TarotDeckCard[]
-}
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-// Utility models
-model Person {
-  id                                  String                                @id @default(uuid())
-  createdAt                           DateTime                              @default(now())
-  updatedAt                           DateTime                              @updatedAt
-  name                                String                                @unique
-  tags                                TagRelation[]
-  participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
-  WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
-  user                                User?
-  querentOrReaderPersonRelation       TarotQuerentOrReaderPersonRelation[]
-}
+  tags  TagRelation[]
+  cards TarotDeckCard[]
 
-model Tag {
-  id          String        @id @default(uuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  text        String
-  type        String // This is the name of the table this tag is associated with
-  tagRelation TagRelation[]
-}
-
-model TagRelation {
-  id              String         @id @default(uuid()) // id field exists because multi-field IDs must be required
-  tag             Tag            @relation(fields: [tagId], references: [id])
-  tagId           String
-  tool            Tool?          @relation(fields: [toolId], references: [id])
-  toolId          String?
-  tarotCardDraw   TarotCardDraw? @relation(fields: [tarotCardDrawId], references: [id])
-  tarotCardDrawId String?
-  tarotCard       TarotCard?     @relation(fields: [tarotCardId], references: [id])
-  tarotCardId     String?
-  tarotDeckCard   TarotDeckCard? @relation(fields: [tarotDeckCardId], references: [id])
-  tarotDeckCardId String?
-  tarotDeck       TarotDeck?     @relation(fields: [tarotDeckId], references: [id])
-  tarotDeckId     String?
-  tarotPosition   TarotPosition? @relation(fields: [tarotPositionId], references: [id])
-  tarotPositionId String?
-  person          Person?        @relation(fields: [personId], references: [id])
-  personId        String?
-  ritualResults   RitualResults? @relation(fields: [ritualResultsId], references: [id])
-  ritualResultsId String?
-  Location        Location?      @relation(fields: [locationId], references: [id])
-  locationId      String?
-  Event           Event?         @relation(fields: [eventId], references: [id])
-  eventId         String?
-}
-
-model RitualResults {
-  id        String        @id @default(uuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  tags      TagRelation[]
-  success   Boolean
-  notes     String?
-  ritual    Ritual        @relation(fields: [ritualId], references: [id])
-  ritualId  String        @unique
+  name  String
+  notes String
 }

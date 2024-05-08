@@ -59,11 +59,11 @@ model Event {
 }
 
 enum EventType {
+  JOURNAL_ENTRY
   RITUAL
   SPOOKY_THING
   SYNCHRONICITY
   TAROT
-  GENERAL
 }
 
 model Location {

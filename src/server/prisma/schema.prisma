@@ -79,6 +79,7 @@ model Location {
   city        String  @default("Atlanta")
   country     String  @default("USA")
   description String?
+  // TODO: Make this unique when modifying Location next
   name        String
   state       String  @default("GA")
 }

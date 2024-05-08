@@ -68,6 +68,7 @@ const passwordRules = [
       </v-btn>
     </p>
   </v-form>
+  <!-- TODO: Figure out what to really do here -->
   <p v-if="userStore.user">
     {{ userStore.user }}
   </p>

@@ -15,6 +15,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// TODO: Go through these models and add something like createdBy User field where appropriate
 // Base models
 model User {
   id        String   @id @default(uuid())
@@ -67,6 +68,7 @@ enum EventType {
   TAROT
 }
 
+// TODO: Consider a "public" field, deciding whether other users can access it
 model Location {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())

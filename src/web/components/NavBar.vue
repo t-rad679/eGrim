@@ -29,6 +29,14 @@ import { Route, getRouteData } from "@/router/route"
           </v-btn>
         </router-link>
         <!-- TODO: Add Location route -->
+        <router-link
+          v-slot="{ navigate }"
+          :to="getRouteData(Route.CREATE_PERSON).path"
+        >
+          <v-btn @click="navigate">
+            Create Person
+          </v-btn>
+        </router-link>
       </v-col>
     </v-row>
   </v-app-bar>

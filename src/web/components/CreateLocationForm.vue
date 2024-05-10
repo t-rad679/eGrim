@@ -5,6 +5,7 @@ import { gql } from "graphql-tag"
 import { ref } from "vue"
 
 // TODO: Add optional address
+// TODO: Add tags
 const name = ref("")
 const city = ref("")
 const state = ref("")

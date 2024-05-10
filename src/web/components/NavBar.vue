@@ -28,6 +28,7 @@ import { Route, getRouteData } from "@/router/route"
             Login
           </v-btn>
         </router-link>
+        <!-- TODO: Add Location route -->
       </v-col>
     </v-row>
   </v-app-bar>

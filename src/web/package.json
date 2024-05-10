@@ -16,6 +16,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.6",
+    "@graphql-codegen/typescript-vue-apollo": "^4.1.1",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@vitejs/plugin-vue": "^4.0.0",

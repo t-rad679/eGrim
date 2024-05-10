@@ -4,7 +4,7 @@ import path from "path"
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { PrismaClient } from "@prisma/client"
-import { CreateOneLocationResolver, FindFirstUserResolver, UserRelationsResolver } from "@typegraphql-prisma"
+import { resolvers } from "@typegraphql-prisma"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
 import cors from "cors"
@@ -23,11 +23,12 @@ const GRAPHQL_PATH = "/graphql"
 async function main() {
     const schema = await buildSchema({
         resolvers: [
-            RegisterResolver,
             LoginResolver,
-            FindFirstUserResolver,
-            UserRelationsResolver,
-            CreateOneLocationResolver,
+            RegisterResolver,
+            // TODO: Figure out why this is necessary and only add the resolvers we actually need
+            //       Hint: File a bug, but also try to find out if there's a way to separately add types and inputs
+            //       without adding their corresponding resolvers
+            ...resolvers,
         ],
         emitSchemaFile: path.resolve(__dirname, "../../out/generated-schema.graphql"),
         validate: false,
@@ -79,7 +80,7 @@ async function main() {
     })
 
     await new Promise<void>(resolve => app.listen({ port: 4000 }, resolve))
-    console.log(`GraphQL server ready at http://localhost:4000/${GRAPHQL_PATH}`)
+    console.log(`GraphQL server ready at http://localhost:4000${GRAPHQL_PATH}`)
 }
 
 main().catch(console.error)

@@ -58,6 +58,11 @@ model Event {
   notes       String?
   outdoor     Boolean  @default(false)
   pictures    String[]
+
+  // Contrary to expectation, Event is somehow experiencing symptoms similar to the bug related to
+  // Relations with no non-relational data
+  // See https://github.com/MichalLytek/typegraphql-prisma/issues/19
+  dummy Int?
 }
 
 enum EventType {

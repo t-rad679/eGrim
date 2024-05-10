@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { User } from "@client-types"
-import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable"
+import { useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
 
-import { DeepPartial } from "@/utils/DeepPartial"
+const props = defineProps({
+    personName: {
+        type: String,
+        default: "",
+        required: false,
+    },
+})
 
 const printErrorFunction = (error) => {
     errorMessages.value.push(error.message)
@@ -19,7 +24,7 @@ const nameRules = [
 ]
 
 const createPersonMutationText = gql`
-        mutation createPersonMutationText($input: PersonCreateInput!) {
+        mutation createPersonMutation($input: PersonCreateInput!) {
             createOnePerson(data: $input) {
                 id
             }
@@ -33,7 +38,7 @@ const {
 } = useMutation(createPersonMutationText)
 
 const updatePersonMutationText = gql`
-        mutation createOrUpdatePersonMutationText($input: CreateOrUpdatePersonInput!, $where: PersonWhereUniqueInput!) {
+        mutation updatePersonMutation($input: PersonUpdateInput!, $where: PersonWhereUniqueInput!) {
             updateOnePerson(data: $input, where: $where) {
                 id
             }
@@ -51,6 +56,9 @@ const {
     onError: updateOnError,
 } = useMutation(updatePersonMutationText)
 
+updateOnDone(() => {
+    success.value = true
+})
 updateOnError(printErrorFunction)
 
 function onSubmit() {
@@ -58,11 +66,24 @@ function onSubmit() {
         name: string,
         tags: string[],
     ) {
-        await createMutate({
-            input: {
-                name,
-            },
-        })
+        if(!props.personName) {
+            await createMutate({
+                input: {
+                    name,
+                    tags,
+                },
+            })
+        } else {
+            await updateMutate({
+                input: {
+                    name: { set: name }, // This may change when we add actual tags
+                    tags,
+                },
+                where: {
+                    name: props.personName,
+                },
+            })
+        }
     }
     // TODO: DO NOT SUBMIT WITHOUT THIS
     createOrUpdatePerson(
@@ -80,7 +101,7 @@ function onSubmit() {
     @submit.prevent="onSubmit"
   >
     <!-- TODO before submit: make this work for creating or updating -->
-    <h2>Create Person</h2>
+    <h2>{{ props.personName ? "Update" : "Create" }} Person</h2>
     <v-text-field
       v-model="name"
       :rules="nameRules"
@@ -96,7 +117,7 @@ function onSubmit() {
     {{ errorMessages }}
   </p>
   <p v-if="success">
-    Successfully executed create query
+    Successfully executed {{ props.personName ? "update" : "create" }} query
   </p>
 </template>
 

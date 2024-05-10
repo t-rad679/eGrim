@@ -1,9 +1,10 @@
 import { Component } from "vue"
 
 import CreateLocationForm from "@/components/CreateLocationForm.vue"
-import CreateOrUpdatePersonForm from "@/components/CreateOrUpdatePersonForm.vue"
+import CreatePersonView from "@/views/CreatePersonView.vue"
 import LoginView from "@/views/LoginView.vue"
 import RegisterView from "@/views/RegisterView.vue"
+import UpdatePersonView from "@/views/UpdatePersonView.vue"
 
 interface RouteData {
     title: Route,
@@ -19,6 +20,7 @@ export enum Route {
     // TODO: This might go away when we integrate it into the create ritual form
     CREATE_LOCATION = "Create Location",
     CREATE_PERSON = "Create Person",
+    UPDATE_PERSON = "Update Person",
 }
 
 export const routes: RouteData[] = [
@@ -27,10 +29,16 @@ export const routes: RouteData[] = [
     { path: "/login", component: LoginView , title: Route.LOGIN, keyName: "login" },
     { path: "/location", component: CreateLocationForm, title: Route.CREATE_LOCATION, keyName: "create_location" },
     {
-        path: "/person",
-        component: CreateOrUpdatePersonForm,
+        path: "/create_person",
+        component: CreatePersonView,
         title: Route.CREATE_PERSON,
-        keyName: "create_or_update_person",
+        keyName: "create_person",
+    },
+    {
+        path: "/update_person",
+        component: UpdatePersonView,
+        title: Route.UPDATE_PERSON,
+        keyName: "update_person",
     },
 ]
 

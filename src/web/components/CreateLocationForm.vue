@@ -4,6 +4,7 @@ import { useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
 
+// TODO: Add optional address
 const name = ref("")
 const city = ref("")
 const state = ref("")

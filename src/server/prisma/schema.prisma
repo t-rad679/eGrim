@@ -75,6 +75,7 @@ model Location {
   Event Event[]
   tags  TagToObjectRelation[]
 
+  // TODO: Remove the defaults. That was lazy and dumb.
   address     String?
   city        String  @default("Atlanta")
   country     String  @default("USA")

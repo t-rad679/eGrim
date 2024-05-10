@@ -3,3 +3,4 @@ generates:
   ../../out/client_types.ts:
     plugins:
       - "typescript"
+      - "typescript-vue-apollo"

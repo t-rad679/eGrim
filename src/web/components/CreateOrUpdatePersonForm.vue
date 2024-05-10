@@ -3,7 +3,6 @@ import { User } from "@client-types"
 import { useLazyQuery, useMutation, useQuery } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
-import { computed } from "vue-demi"
 
 import { DeepPartial } from "@/utils/DeepPartial"
 
@@ -12,17 +11,12 @@ const printErrorFunction = (error) => {
 }
 const name = ref("")
 const tags = ref([] as string[])
-const username = ref("")
 const errorMessages = ref([] as string[])
 const success = ref(false)
 
 const nameRules = [
     (value: string) => (value ? true : "Name is required"),
 ]
-
-const allUsernames = computed(() => {
-    return usersResult?.value?.users?.map((userObj: DeepPartial<User>) => userObj.username)
-})
 
 const createPersonMutationText = gql`
         mutation createPersonMutationText($input: PersonCreateInput!) {
@@ -59,41 +53,14 @@ const {
 
 updateOnError(printErrorFunction)
 
-const usersQueryText = gql`
-        query users {
-            users {
-                username
-                personId
-            }
-        }
-`
-
-const {
-    result: usersResult,
-    onError: usersOnError,
-} = useQuery(usersQueryText)
-
-usersOnError(printErrorFunction)
-
 function onSubmit() {
     async function createOrUpdatePerson(
         name: string,
         tags: string[],
-        username?: string,
     ) {
-        if(usersResult.value.personId) {
-            // TODO: Show a popup
-            errorMessages.value.push("This User is already associated with a person")
-            return
-        }
         await createMutate({
             input: {
                 name,
-                user: username ? {
-                    connect: {
-                        username,
-                    },
-                } : undefined,
             },
         })
     }
@@ -101,7 +68,6 @@ function onSubmit() {
     createOrUpdatePerson(
         name.value,
         tags.value,
-        username.value ?? undefined,
     )
 }
 
@@ -120,18 +86,12 @@ function onSubmit() {
       :rules="nameRules"
       label="The name you associate with this person most strongly"
     />
-    <v-autocomplete
-      v-model="username"
-      :items="allUsernames"
-      label="If this person is an eGrim user, you can associate them with their eGrim account"
-    />
     <v-btn
       type="submit"
     >
       Create Person
     </v-btn>
   </v-form>
-  {{ usersResult }}
   <p v-if="errorMessages">
     {{ errorMessages }}
   </p>

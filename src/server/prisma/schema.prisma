@@ -57,6 +57,8 @@ model Event {
 
   date        DateTime
   description String
+  // TODO: Consider making a model for this
+  mood        String?
   // TODO: Consider adding more astrological data?
   moonPhase   Decimal // If this is null, the API we use to fetch it has failed and we should throw an error
   notes       String?

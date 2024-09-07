@@ -91,14 +91,12 @@ model Location {
   Event Event[]
   tags  TagToObjectRelation[]
 
-  // TODO: Remove the defaults. That was lazy and dumb.
   address     String?
-  city        String  @default("Atlanta")
-  country     String  @default("USA")
+  city        String
+  country     String
   description String?
-  // TODO: Make this unique when modifying Location next
-  name        String
-  state       String  @default("GA")
+  name        String  @unique
+  state       String
 }
 
 model Person {

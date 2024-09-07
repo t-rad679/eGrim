@@ -109,10 +109,9 @@ model Person {
 
   isSelf                              Boolean
   tags                                TagToObjectRelation[]
+  querentOrReaderPersonRelation       TarotQuerentOrReaderPersonRelation[]
   participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
   WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
-  user                                User?
-  querentOrReaderPersonRelation       TarotQuerentOrReaderPersonRelation[]
 
   name String @unique
 }

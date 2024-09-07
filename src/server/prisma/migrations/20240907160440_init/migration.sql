@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'USER');
 
 -- CreateEnum
-CREATE TYPE "EventType" AS ENUM ('RITUAL', 'SPOOKY_THING', 'SYNCHRONICITY', 'TAROT', 'GENERAL');
+CREATE TYPE "EventType" AS ENUM ('JOURNAL_ENTRY', 'RITUAL', 'SPOOKY_THING', 'SYNCHRONICITY', 'TAROT');
 
 -- CreateEnum
 CREATE TYPE "RitualRole" AS ENUM ('LEADER', 'PARTICIPANT', 'SPECTATOR');
@@ -40,6 +40,7 @@ CREATE TABLE "Event" (
     "notes" TEXT,
     "outdoor" BOOLEAN NOT NULL DEFAULT false,
     "pictures" TEXT[],
+    "dummy" INTEGER,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
@@ -95,6 +96,7 @@ CREATE TABLE "TagToObjectRelation" (
     "tarotPositionId" TEXT,
     "toolId" TEXT,
     "tarotSpreadId" TEXT,
+    "dummy" INTEGER,
 
     CONSTRAINT "TagToObjectRelation_pkey" PRIMARY KEY ("id")
 );
@@ -137,6 +139,7 @@ CREATE TABLE "Tool" (
 CREATE TABLE "ToolToRitualRelation" (
     "ritualId" TEXT NOT NULL,
     "toolId" TEXT NOT NULL,
+    "dummy" INTEGER,
 
     CONSTRAINT "ToolToRitualRelation_pkey" PRIMARY KEY ("toolId","ritualId")
 );
@@ -146,6 +149,7 @@ CREATE TABLE "WielderPersonToToolRelationRelation" (
     "toolToRitualRelationRitualId" TEXT NOT NULL,
     "toolToRitualRelationToolId" TEXT NOT NULL,
     "wielderId" TEXT NOT NULL,
+    "dummy" INTEGER,
 
     CONSTRAINT "WielderPersonToToolRelationRelation_pkey" PRIMARY KEY ("toolToRitualRelationRitualId","toolToRitualRelationToolId","wielderId")
 );
@@ -166,6 +170,7 @@ CREATE TABLE "TarotReading" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "eventId" TEXT NOT NULL,
     "spreadId" TEXT NOT NULL,
+    "dummy" INTEGER,
 
     CONSTRAINT "TarotReading_pkey" PRIMARY KEY ("id")
 );

@@ -32,7 +32,8 @@
     "generate-schema": "ts-node index.ts -- --generate_only",
     "migrate": "prisma migrate dev",
     "lint": "eslint --ext .ts *.ts **/*.ts",
-    "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts"
+    "lint-fix": "eslint --fix --ext .ts *.ts **/*.ts",
+    "studio": "prisma studio"
   },
   "author": "tradical"
 }

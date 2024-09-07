@@ -4,12 +4,10 @@
   },
   "compilerOptions": {
     "target": "es2021",
-    "module": "commonjs",
     "verbatimModuleSyntax": false,
     "declaration": false,
     "sourceMap": false,
     "outDir": "./out",
-    "moduleResolution": "node",
     "removeComments": true,
     "importHelpers": true,
     "strict": true,

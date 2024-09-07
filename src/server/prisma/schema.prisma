@@ -158,7 +158,7 @@ model Ritual {
 
   event          Event                               @relation(fields: [eventId], references: [id])
   eventId        String                              @unique
-  // TODO: validate that user, querent and reader are in participants for tarot readings
+  // TODO: validate that querent and reader are in participants for tarot readings
   participants   ParticipantPersonToRitualRelation[]
   results        RitualResults?
   toolRelation   ToolToRitualRelation[]

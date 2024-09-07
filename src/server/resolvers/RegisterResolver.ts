@@ -21,17 +21,16 @@ export class RegisterResolver {
         @Args() { username, password, name }: RegisterArgs,
     ): Promise<User> {
         const finalName = name ? name : username
+        // TODO: Check if the username is taken on blur
         return ctx.prisma.user.create({
             data: {
                 username: username,
                 passwordHash: hashSync(password, 8),
-                person: {
-                    connectOrCreate: {
-                        where: {
-                            name: finalName,
-                        },
-                        create: {
-                            name: finalName,
+                self: {
+                    create: {
+                        name: finalName,
+                        user: {
+                            connect: { username: username },
                         },
                     },
                 },

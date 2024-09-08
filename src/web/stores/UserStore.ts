@@ -12,12 +12,25 @@ export const useUserStore = defineStore("user", () => {
     const user: Ref<DeepPartial<User>> = ref({
         id: userFromLocalStorage.id,
         username: userFromLocalStorage.username,
+        self: {
+            name: userFromLocalStorage.self?.name,
+        },
     })
     provideApolloClient(apolloClient)
     return {
         user,
         login: setupLoginAction(user),
         register: setupRegisterAction(user),
+        logout: () => {
+            user.value = {
+                id: "",
+                username: "",
+                self: {
+                    name: "",
+                },
+            }
+            localStorage.removeItem("user")
+        },
     }
 })
 
@@ -29,6 +42,9 @@ function setupLoginAction(user: Ref<DeepPartial<User>>): loginFn {
             login(username: $user, password: $pass) {
                 id
                 username
+                self {
+                    name
+                }
             }
         }
     `
@@ -68,6 +84,9 @@ function setupRegisterAction(user: Ref<DeepPartial<User>>): registerFn {
             register(username: $user, password: $pass, name: $name) {
                 id
                 username
+                self {
+                    name
+                }
             }
         }
     `

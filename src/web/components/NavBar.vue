@@ -1,6 +1,16 @@
 <script setup lang="ts">
 
+import { computed } from "vue"
+
 import { Route, getRouteData } from "@/router/route"
+import { useUserStore } from "@/stores/UserStore"
+
+const userStore = useUserStore()
+const user = computed(() => userStore.user)
+
+function handleLogout() {
+    userStore.logout()
+}
 </script>
 
 <template>
@@ -10,22 +20,36 @@ import { Route, getRouteData } from "@/router/route"
         <h1>
           eGrim
         </h1>
+        <template v-if="!!user.self.name">
+          Hello, {{ user.self.name }}!
+        </template>
       </v-col>
       <v-col>
+        <template v-if="!user.id">
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.REGISTER).path"
+          >
+            <v-btn @click="navigate">
+              Register
+            </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.LOGIN).path"
+          >
+            <v-btn @click="navigate">
+              Login
+            </v-btn>
+          </router-link>
+        </template>
         <router-link
-          v-slot="{ navigate }"
-          :to="getRouteData(Route.REGISTER).path"
-        >
-          <v-btn @click="navigate">
-            Register
-          </v-btn>
-        </router-link>
-        <router-link
+          v-else
           v-slot="{ navigate }"
           :to="getRouteData(Route.LOGIN).path"
         >
-          <v-btn @click="navigate">
-            Login
+          <v-btn @click="handleLogout">
+            Logout
           </v-btn>
         </router-link>
         <!-- TODO: Add Location route -->

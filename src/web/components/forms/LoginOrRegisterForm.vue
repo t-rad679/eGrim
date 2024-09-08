@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
-import { Route } from "@/router/route"
-import { useUserStore } from "@/stores/UserStore"
+import { Route } from "@/router/route.js"
+import { useUserStore } from "@/stores/UserStore.js"
 
 const username = ref("")
 const password = ref("")

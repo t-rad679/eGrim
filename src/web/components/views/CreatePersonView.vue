@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import CreateOrUpdatePersonForm from "@/components/CreateOrUpdatePersonForm.vue"
+import CreateOrUpdatePersonForm from "@/components/forms/CreateOrUpdatePersonForm.vue"
 </script>
 
 <template>

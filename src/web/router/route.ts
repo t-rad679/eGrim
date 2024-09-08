@@ -1,10 +1,10 @@
 import { Component } from "vue"
 
-import CreateLocationForm from "@/components/CreateLocationForm.vue"
-import CreatePersonView from "@/views/CreatePersonView.vue"
-import LoginView from "@/views/LoginView.vue"
-import RegisterView from "@/views/RegisterView.vue"
-import UpdatePersonView from "@/views/UpdatePersonView.vue"
+import CreateLocationForm from "@/components/forms/CreateLocationForm.vue"
+import CreatePersonView from "@/components/views/CreatePersonView.vue"
+import LoginView from "@/components/views/LoginView.vue"
+import RegisterView from "@/components/views/RegisterView.vue"
+import UpdatePersonView from "@/components/views/UpdatePersonView.vue"
 
 interface RouteData {
     title: Route,

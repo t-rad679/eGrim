@@ -7,7 +7,8 @@
     "paths": {
       "@/*": ["./*"],
       "type-graphql": ["./src/index.ts"],
-      "@typegraphql-prisma": ["../../out/type-graphql"]
+      "@typegraphql-prisma": ["../../out/type-graphql"],
+      "@out/*": ["../../out/*"],
     }
   },
 }

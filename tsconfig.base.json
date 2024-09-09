@@ -41,11 +41,8 @@
         "transform": "typescript-transformer-esm",
         "afterDeclarations": true
       }
-    ],
-    "paths": {
-      "@out/*": ["./out/*"],
-    }
+    ]
   },
-  "exclude": ["./node_modules", "./out"],
+  "exclude": ["./node_modules"],
   "include": ["./src"]
 }

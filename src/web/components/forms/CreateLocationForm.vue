@@ -4,6 +4,8 @@ import { useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
 
+import { useUserStore } from "@/stores/UserStore.js"
+
 // TODO: Add optional address
 // TODO: Add tags
 const name = ref("")
@@ -14,22 +16,11 @@ const description = ref("")
 const success = ref(false)
 const errorMessage = ref("")
 
+const userStore = useUserStore()
+const username = userStore.user.username
+
 const nameRules = [
     (value: string) => (value ? true : "Name is required"),
-]
-
-const cityRules = [
-    (value: string) => (value ? true : "City is required"),
-]
-
-const stateRules = [
-    (value: string) => (value ? true : "State is required"),
-    (value: string) => (value.length === 2 ? true : "State must be a two letter code"),
-]
-
-const countryRules = [
-    (value: string) => (value ? true : "Country is required"),
-    (value: string) => (value.length === 3 ? true : "Country must be a three letter code"),
 ]
 
 // The id is not actually needed but GraphQL requires that we return something
@@ -61,6 +52,11 @@ function onSubmit() {
             state,
             country,
             description,
+            user: {
+                connect: {
+                    username,
+                },
+            },
         } })
     }
 
@@ -97,18 +93,15 @@ function onSubmit() {
     />
     <v-text-field
       v-model="city"
-      :rules="cityRules"
-      label="The city the ritual took place in"
+      label="The city of the location"
     />
     <v-text-field
       v-model="state"
-      :rules="stateRules"
-      label="The state the ritual took place in"
+      label="The state or province of the location"
     />
     <v-text-field
       v-model="country"
-      :rules="countryRules"
-      label="The three letter country code the ritual took place in"
+      label="The three letter country code of the location"
     />
     <v-text-field
       v-model="description"

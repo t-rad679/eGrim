@@ -43,32 +43,31 @@ function handleLogout() {
             </v-btn>
           </router-link>
         </template>
-        <router-link
-          v-else
-          v-slot="{ navigate }"
-          :to="getRouteData(Route.LOGIN).path"
-        >
-          <v-btn @click="handleLogout">
-            Logout
-          </v-btn>
-        </router-link>
-        <!-- TODO: Add Location route -->
-        <router-link
-          v-slot="{ navigate }"
-          :to="getRouteData(Route.CREATE_PERSON).path"
-        >
-          <v-btn @click="navigate">
-            Create Person
-          </v-btn>
-        </router-link>
-        <router-link
-          v-slot="{ navigate }"
-          :to="getRouteData(Route.UPDATE_PERSON).path"
-        >
-          <v-btn @click="navigate">
-            Update Person
-          </v-btn>
-        </router-link>
+        <template v-else>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.CREATE_PERSON).path"
+          >
+            <v-btn @click="navigate">
+              Create Person
+            </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.CREATE_LOCATION).path"
+          >
+            <v-btn @click="navigate">
+              Create Location
+            </v-btn>
+          </router-link>
+          <router-link
+            :to="getRouteData(Route.LOGIN).path"
+          >
+            <v-btn @click="handleLogout">
+              Logout
+            </v-btn>
+          </router-link>
+        </template>
       </v-col>
     </v-row>
   </v-app-bar>

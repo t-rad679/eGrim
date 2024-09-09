@@ -92,11 +92,11 @@ model Location {
   tags  TagToObjectRelation[]
 
   address     String?
-  city        String
-  country     String
+  city        String?
+  country     String?
   description String?
   name        String  @unique
-  state       String
+  state       String?
 }
 
 model Person {

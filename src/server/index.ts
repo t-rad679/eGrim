@@ -4,7 +4,7 @@ import path from "path"
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { PrismaClient } from "@prisma/client"
-import { resolvers } from "@typegraphql-prisma"
+import { applyResolversEnhanceMap, resolvers } from "@typegraphql-prisma"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
 import cors from "cors"
@@ -15,12 +15,14 @@ import { Context } from "@/context"
 import { PopulateUser } from "@/middleware/PopulateUser"
 import { LoginResolver } from "@/resolvers/LoginResolver"
 import { RegisterResolver } from "@/resolvers/RegisterResolver"
+import { resolversEnhanceMap } from "@/resolversEnhanceMap"
 
 import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
 
 const GRAPHQL_PATH = "/graphql"
 
 async function main() {
+    applyResolversEnhanceMap(resolversEnhanceMap)
     const schema = await buildSchema({
         resolvers: [
             LoginResolver,
@@ -33,6 +35,9 @@ async function main() {
         emitSchemaFile: path.resolve(__dirname, "../../out/generated-schema.graphql"),
         validate: false,
         globalMiddlewares: [PopulateUser],
+        authChecker: ({ context }) => {
+            return !!context.user
+        },
     })
 
     if(process.argv.includes("--generate_only")) {

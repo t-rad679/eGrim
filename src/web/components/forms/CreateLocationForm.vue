@@ -4,6 +4,7 @@ import { useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
 
+import TagField from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
 
 // TODO: Add optional address
@@ -46,6 +47,13 @@ function onSubmit() {
         country: string,
         description?: string,
     ) {
+        onDone((_) => {
+            success.value = true
+        })
+
+        onError((error) => {
+            errorMessage.value = error.message
+        })
         await mutate({ input: {
             name,
             city,
@@ -59,14 +67,6 @@ function onSubmit() {
             },
         } })
     }
-
-    onDone((_) => {
-        success.value = true
-    })
-
-    onError((error) => {
-        errorMessage.value = error.message
-    })
 
     createLocation(
         name.value,
@@ -107,6 +107,7 @@ function onSubmit() {
       v-model="description"
       label="What kind of place is it? What is it like?"
     />
+    <TagField />
     <v-btn type="submit">
       Create Location
     </v-btn>

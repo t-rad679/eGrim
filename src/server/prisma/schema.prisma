@@ -130,8 +130,7 @@ model Tag {
 
   tagToObjectRelations TagToObjectRelation[]
 
-  text String
-  type String // This is the name of the table this tag is associated with
+  name String
 }
 
 model TagToObjectRelation {

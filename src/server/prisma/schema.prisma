@@ -131,6 +131,8 @@ model Tag {
   tagToObjectRelations TagToObjectRelation[]
 
   name String
+
+  @@unique([userId, name])
 }
 
 model TagToObjectRelation {
@@ -139,7 +141,6 @@ model TagToObjectRelation {
   tag   Tag    @relation(fields: [tagId], references: [id])
   tagId String
 
-  // TODO: Make a "type" field resolver that calculates which model a particular tag is for
   Event           Event?         @relation(fields: [eventId], references: [id])
   eventId         String?
   Location        Location?      @relation(fields: [locationId], references: [id])

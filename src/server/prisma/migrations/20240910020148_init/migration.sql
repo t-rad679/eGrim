@@ -275,6 +275,9 @@ CREATE UNIQUE INDEX "Person_selfUserId_key" ON "Person"("selfUserId");
 CREATE UNIQUE INDEX "Person_userId_name_key" ON "Person"("userId", "name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Tag_userId_name_key" ON "Tag"("userId", "name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Ritual_eventId_key" ON "Ritual"("eventId");
 
 -- CreateIndex

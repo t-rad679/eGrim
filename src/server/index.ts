@@ -36,7 +36,7 @@ async function main() {
         validate: false,
         globalMiddlewares: [PopulateUser],
         authChecker: ({ context }) => {
-            return !!context.user
+            return !!context.req.session.userId
         },
     })
 
@@ -66,6 +66,7 @@ async function main() {
         GRAPHQL_PATH,
         cors({
             origin: ["https://studio.apollographql.com", "http://localhost:5173"],
+            credentials: true,
         }),
     )
 

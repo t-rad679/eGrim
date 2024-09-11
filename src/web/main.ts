@@ -14,6 +14,7 @@ import router from "@/router/router"
 
 const httpLink = createHttpLink({
     uri: "http://localhost:4000/graphql",
+    credentials: "include",
 })
 
 const cache = new InMemoryCache()

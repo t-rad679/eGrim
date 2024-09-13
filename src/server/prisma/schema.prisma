@@ -85,6 +85,8 @@ model Location {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  name String
+
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
@@ -95,8 +97,10 @@ model Location {
   city        String?
   country     String?
   description String?
-  name        String  @unique
   state       String?
+  zip         String?
+
+  @@unique([userId, name])
 }
 
 model Person {
@@ -141,9 +145,9 @@ model TagToObjectRelation {
   tag   Tag    @relation(fields: [tagId], references: [id])
   tagId String
 
-  Event           Event?         @relation(fields: [eventId], references: [id])
+  event           Event?         @relation(fields: [eventId], references: [id])
   eventId         String?
-  Location        Location?      @relation(fields: [locationId], references: [id])
+  location        Location?      @relation(fields: [locationId], references: [id])
   locationId      String?
   person          Person?        @relation(fields: [personId], references: [id])
   personId        String?
@@ -161,10 +165,12 @@ model TagToObjectRelation {
   tarotPositionId String?
   tool            Tool?          @relation(fields: [toolId], references: [id])
   toolId          String?
-  TarotSpread     TarotSpread?   @relation(fields: [tarotSpreadId], references: [id])
+  tarotSpread     TarotSpread?   @relation(fields: [tarotSpreadId], references: [id])
   tarotSpreadId   String?
 
   dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
+
+  @@unique([tagId, eventId, locationId, personId, ritualResultsId, tarotCardId, tarotCardDrawId, tarotDeckId, tarotDeckCardId, tarotPositionId, toolId, tarotSpreadId])
 }
 
 // Ritual models

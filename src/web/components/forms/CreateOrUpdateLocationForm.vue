@@ -29,6 +29,8 @@ const tags = ref([] as string[])
 const description = ref("")
 
 let oldTags: DeepPartial<Tag>[] = []
+const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
+const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
 
 const success = ref(false)
 const errorMessage = ref("")
@@ -71,7 +73,7 @@ const { result, onError: locationQueryOnError } = useQuery(locationQueryText, {
 })
 
 watch(result, (newResult) => {
-    if (newResult) {
+    if (newResult.location) {
         name.value = newResult.location.name
         address.value = newResult.location.address
         city.value = newResult.location.city
@@ -82,6 +84,10 @@ watch(result, (newResult) => {
         tags.value = newResult.location.tags.map((tag) => tag.tag.name)
         oldTags = newResult.location.tags
     }
+})
+
+locationQueryOnError((error) => {
+    errorMessage.value = error.message
 })
 
 const locationUpsertMutationText = gql`
@@ -125,12 +131,22 @@ function onSubmit() {
                 country,
                 description,
                 tags: {
-                    connect: tags.map((tag) => ({
+                    create: tags.map((tag) => ({
                         tag: {
-                            connect: {
-                                userId_name: {
-                                    userId: userStore.user.id,
+                            connectOrCreate: {
+                                create: {
                                     name: tag,
+                                    user: {
+                                        connect: {
+                                            username: userStore.user.username,
+                                        },
+                                    },
+                                },
+                                where: {
+                                    userId_name: {
+                                        userId: userStore.user.id,
+                                        name: tag,
+                                    },
                                 },
                             },
                         },
@@ -151,15 +167,45 @@ function onSubmit() {
                 country: { set: country },
                 description: { set: description },
                 tags: {
-                    create: tags.map((tag) => ({
+                    create: newlySelectedTags.value.map((tag) => ({
                         tag: {
-                            connect: {
-                                userId_name: {
-                                    userId: userStore.user.id,
+                            connectOrCreate: {
+                                create: {
                                     name: tag,
+                                    user: {
+                                        connect: {
+                                            username: userStore.user.username,
+                                        },
+                                    },
+                                },
+                                where: {
+                                    userId_name: {
+                                        userId: userStore.user.id,
+                                        name: tag,
+                                    },
                                 },
                             },
                         },
+                    })),
+                    delete: newlyRemovedTags.value.map((tag) => ({
+                        AND: [
+                            {
+                                tag: {
+                                    userId_name: {
+                                        userId: userStore.user.id,
+                                        name: tag,
+                                    },
+                                },
+                            },
+                            {
+                                location: {
+                                    userId_name: {
+                                        userId: userStore.user.id,
+                                        name: name,
+                                    },
+                                },
+                            },
+                        ],
                     })),
                 },
                 user: {

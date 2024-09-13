@@ -67,6 +67,14 @@ function handleLogout() {
               Logout
             </v-btn>
           </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.UPDATE_LOCATION).path"
+          >
+            <v-btn @click="navigate">
+              Update Location
+            </v-btn>
+          </router-link>
         </template>
       </v-col>
     </v-row>

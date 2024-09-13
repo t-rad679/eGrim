@@ -241,7 +241,6 @@ function onSubmit() {
     class="w-50"
     @submit.prevent="onSubmit"
   >
-    <h2>Create Location</h2>
     <v-text-field
       v-model="name"
       :rules="nameRules"

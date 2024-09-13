@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 
 import { useTagStore } from "@/stores/TagStore.js"
 
 const tagStore = useTagStore()
-const availableTags = ref(tagStore.tags.map((tag) => tag.name))
+const dbTags = computed(() => tagStore.tags.map((tag) => tag.name))
+const selectedNonDbTags = ref([] as string[])
+const availableTags = computed(() => [...dbTags.value, ...selectedNonDbTags.value])
 const selectedTags = ref([] as string[])
 const search = ref("")
 
 watch(selectedTags, (newSelectedTags, oldSelectedTags) => {
-    const newlySelectedTags = newSelectedTags.filter((tagName) => !oldSelectedTags.includes(tagName))
-    availableTags.value.push(...newlySelectedTags)
-    const newlyDeselectedTags = oldSelectedTags.filter((tagName) => !newSelectedTags.includes(tagName))
-    availableTags.value = availableTags.value.filter((tagName) => !newlyDeselectedTags.includes(tagName))
+    selectedNonDbTags.value.push(...newSelectedTags
+        .filter((tagName) => !oldSelectedTags.includes(tagName))
+        .filter((tagName) => !availableTags.value.includes(tagName)))
+    selectedNonDbTags.value = selectedNonDbTags.value
+        .filter((tagName) => !oldSelectedTags
+            .filter((tagName) => !newSelectedTags.includes(tagName)).includes(tagName))
     search.value = ""
 })
 

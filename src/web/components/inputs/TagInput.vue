@@ -4,19 +4,15 @@ import { computed, ref, watch } from "vue"
 import { useTagStore } from "@/stores/TagStore.js"
 
 const tagStore = useTagStore()
-const availableTags = computed(() => tagStore.tags.map((tag) => tag.name))
-const selectedTags = ref([])
+const availableTags = ref(tagStore.tags.map((tag) => tag.name))
+const selectedTags = ref([] as string[])
 const search = ref("")
 
 watch(selectedTags, (newSelectedTags, oldSelectedTags) => {
     const newlySelectedTags = newSelectedTags.filter((tagName) => !oldSelectedTags.includes(tagName))
-    const tagsToCreate = newlySelectedTags.filter((tagName) => !availableTags.value.includes(tagName))
-    if (tagsToCreate.length > 0) {
-        tagStore.createTags(tagsToCreate)
-        if (tagStore.error) {
-            return
-        }
-    }
+    availableTags.value.push(...newlySelectedTags)
+    const newlyDeselectedTags = oldSelectedTags.filter((tagName) => !newSelectedTags.includes(tagName))
+    availableTags.value = availableTags.value.filter((tagName) => !newlyDeselectedTags.includes(tagName))
     search.value = ""
 })
 

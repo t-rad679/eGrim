@@ -17,8 +17,6 @@ const props = defineProps({
     },
 })
 
-// TODO: Add optional address
-// TODO: Add tags
 const name = ref("")
 const address = ref("")
 const city = ref("")

@@ -1,6 +1,6 @@
 import { Component } from "vue"
 
-import CreateLocationForm from "@/components/forms/CreateLocationForm.vue"
+import CreateLocationForm from "@/components/forms/CreateOrUpdateLocationForm.vue"
 import CreatePersonView from "@/components/views/CreatePersonView.vue"
 import LoginView from "@/components/views/LoginView.vue"
 import RegisterView from "@/components/views/RegisterView.vue"

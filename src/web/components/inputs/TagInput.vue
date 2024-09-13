@@ -43,9 +43,6 @@ watch(selectedTags, (newSelectedTags, oldSelectedTags) => {
       </v-list-item>
     </template>
   </v-combobox>
-  <div v-if="!!error">
-    {{ error }}
-  </div>
 </template>
 <style scoped>
 </style>

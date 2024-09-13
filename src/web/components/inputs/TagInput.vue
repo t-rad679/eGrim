@@ -7,7 +7,6 @@ const tagStore = useTagStore()
 const availableTags = computed(() => tagStore.tags.map((tag) => tag.name))
 const selectedTags = ref([])
 const search = ref("")
-const error = computed(() => tagStore.error)
 
 watch(selectedTags, (newSelectedTags, oldSelectedTags) => {
     const newlySelectedTags = newSelectedTags.filter((tagName) => !oldSelectedTags.includes(tagName))

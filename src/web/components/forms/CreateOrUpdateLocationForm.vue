@@ -1,11 +1,21 @@
 <script setup lang="ts">
 
-import { useMutation } from "@vue/apollo-composable"
+import { Tag } from "@client-types"
+import { useMutation, useQuery } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
-import { ref } from "vue"
+import { computed, ref, watch } from "vue"
 
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
+import { DeepPartial } from "@/utils/DeepPartial.js"
+
+const props = defineProps({
+    locationName: {
+        type: String,
+        default: "",
+        required: false,
+    },
+})
 
 // TODO: Add optional address
 // TODO: Add tags
@@ -15,8 +25,11 @@ const city = ref("")
 const state = ref("")
 const country = ref("")
 const zip = ref("")
-const tags = ref([])
+const tags = ref([] as string[])
 const description = ref("")
+
+let oldTags: DeepPartial<Tag>[] = []
+
 const success = ref(false)
 const errorMessage = ref("")
 
@@ -27,20 +40,62 @@ const nameRules = [
     (value: string) => (value ? true : "Name is required"),
 ]
 
-// The id is not actually needed but GraphQL requires that we return something
-const createLocationMutationText = gql`
-        mutation createLocation($input: LocationCreateInput!) {
-            createOneLocation(data: $input) {
+const locationQueryText = gql`
+        query location($where: LocationWhereUniqueInput!) {
+            location(where: $where) {
                 id
+                name
+                address
+                city
+                state
+                zip
+                country
+                description
+                tags {
+                    tag {
+                        id
+                        name
+                    }
+                }
             }
         }
     `
 
+const { result, onError: locationQueryOnError } = useQuery(locationQueryText, {
+    where: {
+        userId_name: {
+            name: props.locationName,
+            userId: userStore.user.id,
+        },
+    },
+})
+
+watch(result, (newResult) => {
+    if (newResult) {
+        name.value = newResult.location.name
+        address.value = newResult.location.address
+        city.value = newResult.location.city
+        state.value = newResult.location.state
+        zip.value = newResult.location.zip
+        country.value = newResult.location.country
+        description.value = newResult.location.description
+        tags.value = newResult.location.tags.map((tag) => tag.tag.name)
+        oldTags = newResult.location.tags
+    }
+})
+
+const locationUpsertMutationText = gql`
+        mutation upsertLocation($create: LocationCreateInput!, $update: LocationUpdateInput!, $where: LocationWhereUniqueInput!) {
+            upsertOneLocation(create: $create, update: $update, where: $where) {
+                id
+            }
+        }
+    `
 const {
     mutate,
     onDone,
-    onError,
-} = useMutation(createLocationMutationText)
+    onError: upsertLocationOnError,
+} = useMutation(locationUpsertMutationText)
 
 function onSubmit() {
     async function createLocation(
@@ -57,35 +112,69 @@ function onSubmit() {
             success.value = true
         })
 
-        onError((error) => {
+        upsertLocationOnError((error) => {
             errorMessage.value = error.message
         })
-        await mutate({ input: {
-            name,
-            address,
-            city,
-            state,
-            zip,
-            country,
-            description,
-            tags: {
-                create: tags.map((tag) => ({
-                    tag: {
-                        connect: {
-                            userId_name: {
-                                userId: userStore.user.id,
-                                name: tag,
+        await mutate({
+            create: {
+                name,
+                address,
+                city,
+                state,
+                zip,
+                country,
+                description,
+                tags: {
+                    connect: tags.map((tag) => ({
+                        tag: {
+                            connect: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: tag,
+                                },
                             },
                         },
+                    })),
+                },
+                user: {
+                    connect: {
+                        username,
                     },
-                })),
-            },
-            user: {
-                connect: {
-                    username,
                 },
             },
-        } })
+            update: {
+                name: { set: name },
+                address: { set: address },
+                city: { set: city },
+                state: { set: state },
+                zip: { set: zip },
+                country: { set: country },
+                description: { set: description },
+                tags: {
+                    create: tags.map((tag) => ({
+                        tag: {
+                            connect: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: tag,
+                                },
+                            },
+                        },
+                    })),
+                },
+                user: {
+                    connect: {
+                        username,
+                    },
+                },
+            },
+            where: {
+                userId_name: {
+                    name,
+                    userId: userStore.user.id,
+                },
+            },
+        })
     }
 
     createLocation(

@@ -5,7 +5,7 @@ import CreatePersonView from "@/components/views/CreatePersonView.vue"
 import LoginView from "@/components/views/LoginView.vue"
 import RegisterView from "@/components/views/RegisterView.vue"
 import UpdateLocationTestView from "@/components/views/UpdateLocationTestView.vue"
-import UpdatePersonView from "@/components/views/UpdatePersonView.vue"
+import UpdatePersonTestView from "@/components/views/UpdatePersonTestView.vue"
 
 interface RouteData {
     title: Route,
@@ -44,7 +44,7 @@ export const routes: RouteData[] = [
     },
     {
         path: "/update_person",
-        component: UpdatePersonView,
+        component: UpdatePersonTestView,
         title: Route.UPDATE_PERSON,
         keyName: "update_person",
     },

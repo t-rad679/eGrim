@@ -4,5 +4,10 @@ import CreateOrUpdatePersonForm from "@/components/forms/CreateOrUpdatePersonFor
 </script>
 
 <template>
-  <CreateOrUpdatePersonForm person-name="foo" />
+  <h2>Update Person</h2>
+  <CreateOrUpdatePersonForm person-name="Tori Williams" />
 </template>
+
+<style scoped>
+
+</style>

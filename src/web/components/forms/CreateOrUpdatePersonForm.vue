@@ -66,25 +66,33 @@ const personQueryText = gql`
     `
 const { result, onError: personQueryOnError } = useQuery(personQueryText, {
     where: {
-        name: props.personName,
+        userId_name: {
+            name: props.personName,
+            userId: userStore.user.id,
+        },
     },
 })
 
 personQueryOnError(printErrorFunction)
 
 let oldTags: DeepPartial<Tag>[] = []
-const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
-const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
+const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.includes(tag)))
+const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag)))
 watch(result, (newResult) => {
-    if (newResult) {
-        name.value = newResult.name
-        description.value = newResult.description
-        tags.value = newResult.tags.map((tag) => tag.tag.name)
-        oldTags = newResult.tags
+    if (newResult.person) {
+        name.value = newResult.person.name
+        description.value = newResult.person.description
+        tags.value = newResult.person.tags?.map((tag) => tag.tag.name) ?? []
+        oldTags = tags.value
+    } else {
+        console.log("No person found")
     }
 })
 
 function onSubmit() {
+
+    console.log("newlySelectedTags: ", newlySelectedTags.value)
+    console.log("newlyRemovedTags: ", newlyRemovedTags.value)
     mutate({
         create: {
             name: name.value,
@@ -145,17 +153,28 @@ function onSubmit() {
                     AND: [
                         {
                             tag: {
-                                userId_name: {
-                                    userId: userStore.user.id,
-                                    name: tag,
+                                is: {
+                                    AND: [
+                                        {
+                                            userId: { equals: userStore.user.id },
+                                        },
+                                        {
+                                            name: { equals: tag },
+                                        },
+                                    ],
                                 },
                             },
                         },
                         {
-                            location: {
-                                userId_name: {
-                                    userId: userStore.user.id,
-                                    name: name,
+                            person: {
+                                is: {
+                                    AND: [
+                                        {
+                                            userId: { equals: userStore.user.id },
+                                        }, {
+                                            name: { equals: props.personName },
+                                        },
+                                    ],
                                 },
                             },
                         },
@@ -171,7 +190,7 @@ function onSubmit() {
         },
         where: {
             userId_name: {
-                name: name.value,
+                name: props.personName,
                 userId: userStore.user.id,
             },
         },
@@ -196,14 +215,11 @@ function onSubmit() {
       v-model="description"
       label="What is this person like?"
     />
-    <TagInput
-      v-model="tags"
-      label="Tags"
-    />
+    <TagInput v-model="tags" />
     <v-btn
       type="submit"
     >
-      Create Person
+      {{ props.personName ? "Update" : "Create" }} Person
     </v-btn>
   </v-form>
   <p v-if="errorMessages">

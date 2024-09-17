@@ -54,6 +54,14 @@ function handleLogout() {
           </router-link>
           <router-link
             v-slot="{ navigate }"
+            :to="getRouteData(Route.UPDATE_PERSON).path"
+          >
+            <v-btn @click="navigate">
+              Update Person
+            </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
             :to="getRouteData(Route.CREATE_LOCATION).path"
           >
             <v-btn @click="navigate">

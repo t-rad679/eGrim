@@ -11,6 +11,7 @@ import { aliases, mdi } from "vuetify/iconsets/mdi"
 import App from "@/App.vue"
 import router from "@/router/router"
 
+import "@/styles/forms.css"
 
 const httpLink = createHttpLink({
     uri: "http://localhost:4000/graphql",

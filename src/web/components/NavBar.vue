@@ -20,12 +20,12 @@ function handleLogout() {
         <h1>
           eGrim
         </h1>
-        <template v-if="!!user.self.name">
+        <template v-if="!!user?.self?.name">
           Hello, {{ user.self.name }}!
         </template>
       </v-col>
       <v-col>
-        <template v-if="!user.id">
+        <template v-if="!user?.id">
           <router-link
             v-slot="{ navigate }"
             :to="getRouteData(Route.REGISTER).path"

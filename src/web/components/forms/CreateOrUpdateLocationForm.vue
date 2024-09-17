@@ -27,10 +27,6 @@ const zip = ref("")
 const tags = ref([] as string[])
 const description = ref("")
 
-let oldTags: DeepPartial<Tag>[] = []
-const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
-const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
-
 const success = ref(false)
 const errorMessage = ref("")
 
@@ -69,6 +65,9 @@ const { result, onError: locationQueryOnError } = useQuery(locationQueryText, {
     },
 })
 
+let oldTags: DeepPartial<Tag>[] = []
+const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
+const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
 watch(result, (newResult) => {
     if (newResult.location) {
         name.value = newResult.location.name

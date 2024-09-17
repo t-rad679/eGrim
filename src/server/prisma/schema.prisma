@@ -112,14 +112,15 @@ model Person {
   userId String
 
   selfUser   User?   @relation("Person_selfToUser", fields: [selfUserId], references: [id])
-  selfUserId String? @unique
+  selfUserId String? @unique // This is redundant, but makes things much easier when working with it
 
   tags                                TagToObjectRelation[]
   querentOrReaderPersonRelation       TarotQuerentOrReaderPersonRelation[]
   participantPersonToRitualRelation   ParticipantPersonToRitualRelation[]
   WielderPersonToToolRelationRelation WielderPersonToToolRelationRelation[]
 
-  name String
+  name        String
+  description String?
 
   @@unique([userId, name])
 }

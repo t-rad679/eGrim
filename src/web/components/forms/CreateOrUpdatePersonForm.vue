@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { useMutation } from "@vue/apollo-composable"
+import { Tag } from "@client-types"
+import { useMutation, useQuery } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
-import { ref } from "vue"
+import { computed, ref, watch } from "vue"
 
+import TagInput from "@/components/inputs/TagInput.vue"
+import { useUserStore } from "@/stores/UserStore.js"
+import { DeepPartial } from "@/utils/DeepPartial.js"
 import { createFieldRequiredRule } from "@/utils/validationUtils.js"
 
 const props = defineProps({
@@ -13,83 +17,165 @@ const props = defineProps({
     },
 })
 
-const printErrorFunction = (error) => {
-    errorMessages.value.push(error.message)
-}
+const userStore = useUserStore()
+
 const name = ref("")
+const description = ref("")
 const tags = ref([] as string[])
+
 const errorMessages = ref([] as string[])
 const success = ref(false)
-
+const printErrorFunction = (error) => {
+    errorMessages.value.push(error.message)
+    success.value = false
+}
 const nameRules = [createFieldRequiredRule("Name")]
 
-const createPersonMutationText = gql`
-        mutation createPersonMutation($input: PersonCreateInput!) {
-            createOnePerson(data: $input) {
+const upsertPersonMutationText = gql`
+        mutation upsertPersonMutation(
+                $create: PersonCreateInput!,
+                $update: PersonUpdateInput!,
+                $where: PersonWhereUniqueInput!
+        ) {
+            upsertOnePerson(create: $create, update: $update, where: $where) {
                 id
             }
         }
 `
+const { mutate, onDone, onError } = useMutation(upsertPersonMutationText)
 
-const {
-    mutate: createMutate,
-    onDone: createOnDone,
-    onError: createOnError,
-} = useMutation(createPersonMutationText)
+onDone(() => {
+    success.value = true
+})
+onError(printErrorFunction)
 
-const updatePersonMutationText = gql`
-        mutation updatePersonMutation($input: PersonUpdateInput!, $where: PersonWhereUniqueInput!) {
-            updateOnePerson(data: $input, where: $where) {
+const personQueryText = gql`
+        query person($where: PersonWhereUniqueInput!) {
+            person(where: $where) {
                 id
+                name
+                description
+                tags {
+                    tag {
+                        id
+                        name
+                    }
+                }
             }
         }
-`
-
-createOnDone(() => {
-    success.value = true
+    `
+const { result, onError: personQueryOnError } = useQuery(personQueryText, {
+    where: {
+        name: props.personName,
+    },
 })
-createOnError(printErrorFunction)
 
-const {
-    mutate: updateMutate,
-    onDone: updateOnDone,
-    onError: updateOnError,
-} = useMutation(updatePersonMutationText)
+personQueryOnError(printErrorFunction)
 
-updateOnDone(() => {
-    success.value = true
+let oldTags: DeepPartial<Tag>[] = []
+const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
+const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
+watch(result, (newResult) => {
+    if (newResult) {
+        name.value = newResult.name
+        description.value = newResult.description
+        tags.value = newResult.tags.map((tag) => tag.tag.name)
+        oldTags = newResult.tags
+    }
 })
-updateOnError(printErrorFunction)
 
 function onSubmit() {
-    async function createOrUpdatePerson(
-        name: string,
-        tags: string[],
-    ) {
-        if(!props.personName) {
-            await createMutate({
-                input: {
-                    name,
-                    tags,
+    mutate({
+        create: {
+            name: name.value,
+            description: description.value,
+            tags: {
+                create: tags.value.map((tag) => ({
+                    tag: {
+                        connectOrCreate: {
+                            create: {
+                                name: tag,
+                                user: {
+                                    connect: {
+                                        username: userStore.user.username,
+                                    },
+                                },
+                            },
+                            where: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: tag,
+                                },
+                            },
+                        },
+                    },
+                })),
+            },
+            user: {
+                connect: {
+                    username: userStore.user.username,
                 },
-            })
-        } else {
-            await updateMutate({
-                input: {
-                    name: { set: name }, // This may change when we add actual tags
-                    tags,
+            },
+        },
+        update: {
+            name: { set: name.value },
+            description: { set: description.value },
+            tags: {
+                create: newlySelectedTags.value.map((tag) => ({
+                    tag: {
+                        connectOrCreate: {
+                            create: {
+                                name: tag,
+                                user: {
+                                    connect: {
+                                        username: userStore.user.username,
+                                    },
+                                },
+                            },
+                            where: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: tag,
+                                },
+                            },
+                        },
+                    },
+                })),
+                delete: newlyRemovedTags.value.map((tag) => ({
+                    AND: [
+                        {
+                            tag: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: tag,
+                                },
+                            },
+                        },
+                        {
+                            location: {
+                                userId_name: {
+                                    userId: userStore.user.id,
+                                    name: name,
+                                },
+                            },
+                        },
+                    ],
+                })),
+            },
+
+            user: {
+                connect: {
+                    username: userStore.user.username,
                 },
-                where: {
-                    name: props.personName,
-                },
-            })
-        }
-    }
-    // TODO: DO NOT SUBMIT WITHOUT THIS
-    createOrUpdatePerson(
-        name.value,
-        tags.value,
-    )
+            },
+        },
+        where: {
+            userId_name: {
+                name: name.value,
+                userId: userStore.user.id,
+            },
+        },
+    })
 }
 
 </script>
@@ -100,13 +186,19 @@ function onSubmit() {
     clas="w-50"
     @submit.prevent="onSubmit"
   >
-    <!-- TODO before submit: make this work for creating or updating -->
-    <h2>{{ props.personName ? "Update" : "Create" }} Person</h2>
     <v-text-field
       v-model="name"
       :rules="nameRules"
       label="The name you associate with this person most strongly"
       class="required"
+    />
+    <v-text-field
+      v-model="description"
+      label="What is this person like?"
+    />
+    <TagInput
+      v-model="tags"
+      label="Tags"
     />
     <v-btn
       type="submit"

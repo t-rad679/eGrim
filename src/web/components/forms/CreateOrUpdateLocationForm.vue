@@ -66,8 +66,8 @@ const { result, onError: locationQueryOnError } = useQuery(locationQueryText, {
 })
 
 let oldTags: DeepPartial<Tag>[] = []
-const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.map((oldTag) => oldTag.name).includes(tag)))
-const newlyRemovedTags = computed(() => oldTags.map((oldTag) => oldTag.name).filter((tag) => !tags.value.includes(tag)))
+const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.includes(tag)))
+const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag)))
 watch(result, (newResult) => {
     if (newResult.location) {
         name.value = newResult.location.name
@@ -77,8 +77,8 @@ watch(result, (newResult) => {
         zip.value = newResult.location.zip
         country.value = newResult.location.country
         description.value = newResult.location.description
-        tags.value = newResult.location.tags.map((tag) => tag.tag.name)
-        oldTags = newResult.location.tags
+        tags.value = newResult.location.tags.map((tag) => tag.tag.name) ?? []
+        oldTags = tags.value
     }
 })
 

@@ -9,13 +9,16 @@ import { DeepPartial } from "@/utils/DeepPartial"
 
 export const useUserStore = defineStore("user", () => {
     const userFromLocalStorage: DeepPartial<User> = JSON.parse(localStorage.getItem("user") ?? "{}")
-    const user: Ref<DeepPartial<User>> = ref({
-        id: userFromLocalStorage.id,
-        username: userFromLocalStorage.username,
-        self: {
-            name: userFromLocalStorage.self?.name,
-        },
-    })
+    const user: Ref<DeepPartial<User>> = ref({} as DeepPartial<User>)
+    if (userFromLocalStorage) {
+        user.value = {
+            id: userFromLocalStorage.id,
+            username: userFromLocalStorage.username,
+            self: {
+                name: userFromLocalStorage.self?.name,
+            },
+        }
+    }
     provideApolloClient(apolloClient)
     return {
         user,

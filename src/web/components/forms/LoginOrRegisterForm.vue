@@ -3,6 +3,7 @@ import { ref } from "vue"
 
 import { Route } from "@/router/route.js"
 import { useUserStore } from "@/stores/UserStore.js"
+import { createFieldRequiredRule } from "@/utils/validationUtils.js"
 
 const username = ref("")
 const password = ref("")
@@ -27,12 +28,10 @@ function onSubmit() {
     }
 }
 
-const usernameRules = [
-    (value: string) => (value ? true : "Username is required"),
-]
+const usernameRules = [createFieldRequiredRule("Username")]
 
 const passwordRules = [
-    (value: string) => (value.length > 0 ? true : "Password is required"),
+    createFieldRequiredRule("Password"),
     (value: string) => (value.length <= 64 ? true : "Password must be less than or equal to 64 characters"),
 ]
 </script>
@@ -49,17 +48,20 @@ const passwordRules = [
       v-model="username"
       :rules="usernameRules"
       label="Username"
+      class="required"
     />
     <v-text-field
       v-model="password"
       type="password"
       :rules="passwordRules"
       label="Password"
+      class="required"
     />
     <p v-if="title === Route.REGISTER">
+      <!-- TODO(https://github.com/t-rad679/egrim/issues/50): Add a tooltip -->
       <v-text-field
         v-model="name"
-        label="Name"
+        label="Name (Will use Username if not provided)"
       />
     </p>
     <p>

@@ -3,6 +3,8 @@ import { useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { ref } from "vue"
 
+import { createFieldRequiredRule } from "@/utils/validationUtils.js"
+
 const props = defineProps({
     personName: {
         type: String,
@@ -19,9 +21,7 @@ const tags = ref([] as string[])
 const errorMessages = ref([] as string[])
 const success = ref(false)
 
-const nameRules = [
-    (value: string) => (value ? true : "Name is required"),
-]
+const nameRules = [createFieldRequiredRule("Name")]
 
 const createPersonMutationText = gql`
         mutation createPersonMutation($input: PersonCreateInput!) {
@@ -106,6 +106,7 @@ function onSubmit() {
       v-model="name"
       :rules="nameRules"
       label="The name you associate with this person most strongly"
+      class="required"
     />
     <v-btn
       type="submit"

@@ -8,6 +8,7 @@ import { computed, ref, watch } from "vue"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
 import { DeepPartial } from "@/utils/DeepPartial.js"
+import { createFieldRequiredRule } from "@/utils/validationUtils.js"
 
 const props = defineProps({
     locationName: {
@@ -36,9 +37,7 @@ const errorMessage = ref("")
 const userStore = useUserStore()
 const username = userStore.user.username
 
-const nameRules = [
-    (value: string) => (value ? true : "Name is required"),
-]
+const nameRules = [createFieldRequiredRule("Name")]
 
 const locationQueryText = gql`
         query location($where: LocationWhereUniqueInput!) {
@@ -245,6 +244,7 @@ function onSubmit() {
       v-model="name"
       :rules="nameRules"
       label="The name you want to identify this location by"
+      class="required"
     />
     <v-text-field
       v-model="address"

@@ -1,9 +1,6 @@
-import { type } from "node:os"
-
 import {
     TagCreateNestedOneWithoutTagToObjectRelationsInput,
-    TagToObjectRelationCreateOrConnectWithoutLocationInput,
-    TagToObjectRelationCreateWithoutPersonInput, TagToObjectRelationScalarWhereInput,
+    TagToObjectRelationScalarWhereInput,
 } from "@client-types"
 
 type TagToObjectRelationCreateWithoutXInput = {

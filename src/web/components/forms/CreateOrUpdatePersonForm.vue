@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { ApolloError } from "@apollo/client/core"
 import { Tag, TagToObjectRelation } from "@client-types"
-import { useMutation, useQuery } from "@vue/apollo-composable"
+import { useQuery } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { computed, ref, watch } from "vue"
 
-import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/globalApiHelper.js"
 import { createUpsertPersonMutation, doUpsertPerson } from "@/api/personApi.js"
-import {
-    createTagToObjectRelationCreateOrConnectInputForMutations,
-    createTagToObjectRelationWhereUniqueInputForMutations,
-} from "@/api/tagToObjectRelationApi.js"
-import { createUserWhereUniqueInputForMutations } from "@/api/userApi.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
 import { DeepPartial } from "@/utils/DeepPartial.js"

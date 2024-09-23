@@ -1,7 +1,6 @@
 import { MutationUpsertOnePersonArgs } from "@client-types"
 import { MutateFunction, UseMutationReturn, useMutation } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
-import { id } from "vuetify/locale"
 
 import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/globalApiHelper.js"
 import {

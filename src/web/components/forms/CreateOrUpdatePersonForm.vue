@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { Tag } from "@client-types"
+import { ApolloError } from "@apollo/client/core"
+import { Tag, TagToObjectRelation } from "@client-types"
 import { useMutation, useQuery } from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { computed, ref, watch } from "vue"
 
+import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/globalApiHelper.js"
+import {
+    createTagToObjectRelationCreateOrConnectInputForMutations,
+    createTagToObjectRelationWhereUniqueInputForMutations,
+} from "@/api/tagToObjectRelationApiHelper.js"
+import { createUserWhereUniqueInputForMutations } from "@/api/userApiHelper.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
 import { DeepPartial } from "@/utils/DeepPartial.js"
@@ -22,13 +29,16 @@ const userStore = useUserStore()
 const name = ref("")
 const description = ref("")
 const tags = ref([] as string[])
-
 const errorMessages = ref([] as string[])
 const success = ref(false)
-const printErrorFunction = (error) => {
+
+let personId = ""
+const printErrorFunction = (error: ApolloError) => {
+    console.log(error)
     errorMessages.value.push(error.message)
     success.value = false
 }
+
 const nameRules = [createFieldRequiredRule("Name")]
 
 const upsertPersonMutationText = gql`
@@ -76,124 +86,51 @@ const { result, onError: personQueryOnError } = useQuery(personQueryText, {
 personQueryOnError(printErrorFunction)
 
 let oldTags: DeepPartial<Tag>[] = []
-const newlySelectedTags = computed(() => tags.value.filter((tag) => !oldTags.includes(tag)))
-const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag)))
+const newlySelectedTags = computed(
+    () => tags.value.filter((tag) => !oldTags.map((tag) => tag.name ?? "").includes(tag)),
+)
+const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag.name ?? "")))
 watch(result, (newResult) => {
     if (newResult.person) {
         name.value = newResult.person.name
+        personId = newResult.person.id
         description.value = newResult.person.description
-        tags.value = newResult.person.tags?.map((tag) => tag.tag.name) ?? []
-        oldTags = tags.value
+        tags.value = newResult.person.tags?.map((tag: DeepPartial<TagToObjectRelation>) => tag?.tag?.name) ?? []
+        oldTags = newResult.person.tags?.map((tag: DeepPartial<TagToObjectRelation>) => tag?.tag) ?? []
     } else {
         console.log("No person found")
     }
 })
 
 function onSubmit() {
-
-    console.log("newlySelectedTags: ", newlySelectedTags.value)
-    console.log("newlyRemovedTags: ", newlyRemovedTags.value)
     mutate({
         create: {
             name: name.value,
             description: description.value,
             tags: {
-                create: tags.value.map((tag) => ({
-                    tag: {
-                        connectOrCreate: {
-                            create: {
-                                name: tag,
-                                user: {
-                                    connect: {
-                                        username: userStore.user.username,
-                                    },
-                                },
-                            },
-                            where: {
-                                userId_name: {
-                                    userId: userStore.user.id,
-                                    name: tag,
-                                },
-                            },
-                        },
-                    },
-                })),
+                create: tags.value.map((tag) => (createTagToObjectRelationCreateOrConnectInputForMutations(
+                    tag,
+                    userStore.user.username,
+                    userStore.user.id,
+                ))),
             },
-            user: {
-                connect: {
-                    username: userStore.user.username,
-                },
-            },
+            user: createUserWhereUniqueInputForMutations(userStore.user.username),
         },
         update: {
             name: { set: name.value },
             description: { set: description.value },
             tags: {
-                create: newlySelectedTags.value.map((tag) => ({
-                    tag: {
-                        connectOrCreate: {
-                            create: {
-                                name: tag,
-                                user: {
-                                    connect: {
-                                        username: userStore.user.username,
-                                    },
-                                },
-                            },
-                            where: {
-                                userId_name: {
-                                    userId: userStore.user.id,
-                                    name: tag,
-                                },
-                            },
-                        },
-                    },
-                })),
-                delete: newlyRemovedTags.value.map((tag) => ({
-                    AND: [
-                        {
-                            tag: {
-                                is: {
-                                    AND: [
-                                        {
-                                            userId: { equals: userStore.user.id },
-                                        },
-                                        {
-                                            name: { equals: tag },
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                        {
-                            person: {
-                                is: {
-                                    AND: [
-                                        {
-                                            userId: { equals: userStore.user.id },
-                                        }, {
-                                            name: { equals: props.personName },
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                })),
-            },
-
-            user: {
-                connect: {
-                    username: userStore.user.username,
-                },
+                create: newlySelectedTags.value.map((tag) => (createTagToObjectRelationCreateOrConnectInputForMutations(
+                    tag,
+                    userStore.user.username,
+                    userStore.user.id,
+                ))),
+                deleteMany: newlyRemovedTags.value.map((tag) => (
+                    // TODO: See if there's a way we can achieve type safety without using ?? "" and DeepPartial
+                    createTagToObjectRelationWhereUniqueInputForMutations(tag.id ?? "", { personId: { equals: personId } }))),
             },
         },
-        where: {
-            userId_name: {
-                name: props.personName,
-                userId: userStore.user.id,
-            },
-        },
+        where: createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne(userStore.user.id, props.personName),
     })
 }
 

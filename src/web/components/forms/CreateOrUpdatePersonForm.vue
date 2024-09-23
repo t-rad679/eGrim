@@ -6,11 +6,12 @@ import { gql } from "graphql-tag"
 import { computed, ref, watch } from "vue"
 
 import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/globalApiHelper.js"
+import { createUpsertPersonMutation, doUpsertPerson } from "@/api/personApi.js"
 import {
     createTagToObjectRelationCreateOrConnectInputForMutations,
     createTagToObjectRelationWhereUniqueInputForMutations,
-} from "@/api/tagToObjectRelationApiHelper.js"
-import { createUserWhereUniqueInputForMutations } from "@/api/userApiHelper.js"
+} from "@/api/tagToObjectRelationApi.js"
+import { createUserWhereUniqueInputForMutations } from "@/api/userApi.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore.js"
 import { DeepPartial } from "@/utils/DeepPartial.js"
@@ -41,18 +42,7 @@ const printErrorFunction = (error: ApolloError) => {
 
 const nameRules = [createFieldRequiredRule("Name")]
 
-const upsertPersonMutationText = gql`
-        mutation upsertPersonMutation(
-                $create: PersonCreateInput!,
-                $update: PersonUpdateInput!,
-                $where: PersonWhereUniqueInput!
-        ) {
-            upsertOnePerson(create: $create, update: $update, where: $where) {
-                id
-            }
-        }
-`
-const { mutate, onDone, onError } = useMutation(upsertPersonMutationText)
+const { mutate, onDone, onError } = createUpsertPersonMutation()
 
 onDone(() => {
     success.value = true
@@ -103,35 +93,17 @@ watch(result, (newResult) => {
 })
 
 function onSubmit() {
-    mutate({
-        create: {
-            name: name.value,
-            description: description.value,
-            tags: {
-                create: tags.value.map((tag) => (createTagToObjectRelationCreateOrConnectInputForMutations(
-                    tag,
-                    userStore.user.username,
-                    userStore.user.id,
-                ))),
-            },
-            user: createUserWhereUniqueInputForMutations(userStore.user.username),
-        },
-        update: {
-            name: { set: name.value },
-            description: { set: description.value },
-            tags: {
-                create: newlySelectedTags.value.map((tag) => (createTagToObjectRelationCreateOrConnectInputForMutations(
-                    tag,
-                    userStore.user.username,
-                    userStore.user.id,
-                ))),
-                deleteMany: newlyRemovedTags.value.map((tag) => (
-                    // TODO: See if there's a way we can achieve type safety without using ?? "" and DeepPartial
-                    createTagToObjectRelationWhereUniqueInputForMutations(tag.id ?? "", { personId: { equals: personId } }))),
-            },
-        },
-        where: createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne(userStore.user.id, props.personName),
-    })
+    doUpsertPerson(
+        mutate,
+        name.value,
+        description.value,
+        userStore.user.username,
+        userStore.user.id,
+        newlySelectedTags.value,
+        newlyRemovedTags.value.map((tag) => tag.id ?? ""),
+        personId,
+        props.personName,
+    )
 }
 
 </script>

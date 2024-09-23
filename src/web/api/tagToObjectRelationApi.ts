@@ -1,18 +1,19 @@
+import { type } from "node:os"
+
 import {
+    TagCreateNestedOneWithoutTagToObjectRelationsInput,
     TagToObjectRelationCreateOrConnectWithoutLocationInput,
     TagToObjectRelationCreateWithoutPersonInput, TagToObjectRelationScalarWhereInput,
 } from "@client-types"
 
-type tagToObjectRelationCreateWithoutXType = (
-        TagToObjectRelationCreateWithoutPersonInput |
-        TagToObjectRelationCreateOrConnectWithoutLocationInput
-)
-
+type TagToObjectRelationCreateWithoutXInput = {
+    tag: TagCreateNestedOneWithoutTagToObjectRelationsInput,
+}
 export function createTagToObjectRelationCreateOrConnectInputForMutations(
     tagName: string,
     username: string,
     userId: string,
-): tagToObjectRelationCreateWithoutXType{
+): TagToObjectRelationCreateWithoutXInput {
     return {
         tag: {
             connectOrCreate: {

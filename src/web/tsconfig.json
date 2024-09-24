@@ -1,11 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "paths": {
       "@/*": ["./*"],
-      "@client-types": ["../../out/client_types.ts"],
-    }
-  }
+      "@client-types": ["../../out/client_types.ts"]
+    },
+    "resolveJsonModule": true
+  },
+  "include": ["./**/*.ts", "./**/*.vue"]
 }

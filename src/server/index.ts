@@ -4,7 +4,10 @@ import path from "path"
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from "@apollo/server/express4"
 import { PrismaClient } from "@prisma/client"
-import { applyResolversEnhanceMap, resolvers } from "@typegraphql-prisma"
+import {
+    applyResolversEnhanceMap,
+    resolvers,
+} from "@typegraphql-prisma"
 import bodyParser from "body-parser"
 import cookieSession from "cookie-session"
 import cors from "cors"

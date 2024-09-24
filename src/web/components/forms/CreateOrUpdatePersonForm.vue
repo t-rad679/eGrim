@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ApolloError } from "@apollo/client/core"
 import { Tag, TagToObjectRelation } from "@client-types"
-import { computed, ref, watch } from "vue"
+import { ref, watch } from "vue"
 
 import { createUpsertPersonMutation, doPersonQuery, doUpsertPerson } from "@/api/personApi"
 import TagInput from "@/components/inputs/TagInput.vue"
@@ -25,10 +25,6 @@ const tags = ref([] as string[])
 const errorMessages = ref([] as string[])
 const success = ref(false)
 
-const newlySelectedTags = computed(
-    () => tags.value.filter((tag) => !oldTags.map((tag) => tag.name ?? "").includes(tag)),
-)
-
 let personId = ""
 let oldTags: DeepPartial<Tag>[] = []
 
@@ -49,7 +45,6 @@ upsertPersonOnError(printErrorFunction)
 const { result, onError: personQueryOnError } = doPersonQuery(props.personName, userStore.user.id)
 personQueryOnError(printErrorFunction)
 
-const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag.name ?? "")))
 watch(result, (newResult) => {
     if (newResult?.person) {
         name.value = newResult.person.name
@@ -69,8 +64,8 @@ function onSubmit() {
         description.value,
         userStore.user.username,
         userStore.user.id,
-        newlySelectedTags.value,
-        newlyRemovedTags.value.map((tag) => tag.id ?? ""),
+        tags.value.filter((tag) => !oldTags.map((tag) => tag.name ?? "").includes(tag)),
+        oldTags.filter((tag) => !tags.value.includes(tag.name ?? "")).map((tag) => tag.id ?? ""),
         personId,
         props.personName,
     )

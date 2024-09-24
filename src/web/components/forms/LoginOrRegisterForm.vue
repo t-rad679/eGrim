@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
 
-import { Route } from "@/router/route.js"
-import { useUserStore } from "@/stores/UserStore.js"
-import { createFieldRequiredRule } from "@/utils/validationUtils.js"
+import { Route } from "@/router/route"
+import { useUserStore } from "@/stores/UserStore"
+import { createFieldRequiredRule } from "@/utils/validationUtils"
 
 const username = ref("")
 const password = ref("")

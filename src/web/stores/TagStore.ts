@@ -4,8 +4,8 @@ import { gql } from "graphql-tag"
 import { defineStore } from "pinia"
 import { onBeforeMount, ref, watch } from "vue"
 
-import { useUserStore } from "@/stores/UserStore.js"
-import { DeepPartial } from "@/utils/DeepPartial.js"
+import { useUserStore } from "@/stores/UserStore"
+import { DeepPartial } from "@/utils/DeepPartial"
 
 const fetchTagsQueryText = gql`
     query fetchTags($userId: String!) {

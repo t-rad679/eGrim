@@ -1,12 +1,23 @@
 import "vuetify/styles"
 
 
-import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client/core"
+import {
+    ApolloClient,
+    InMemoryCache,
+    createHttpLink,
+} from "@apollo/client/core"
 import { DefaultApolloClient } from "@vue/apollo-composable"
 import { createPinia } from "pinia"
-import { createApp, h, provide } from "vue"
+import {
+    createApp,
+    h,
+    provide,
+} from "vue"
 import { createVuetify } from "vuetify"
-import { aliases, mdi } from "vuetify/iconsets/mdi"
+import {
+    aliases,
+    mdi,
+} from "vuetify/iconsets/mdi"
 
 import App from "@/App.vue"
 import router from "@/router/router"

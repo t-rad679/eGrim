@@ -1,6 +1,13 @@
 import { User } from "@typegraphql-prisma"
 import { hashSync } from "bcryptjs"
-import { Args, ArgsType, Ctx, Field, Mutation, Resolver } from "type-graphql"
+import {
+    Args,
+    ArgsType,
+    Ctx,
+    Field,
+    Mutation,
+    Resolver,
+} from "type-graphql"
 
 import { Context } from "@/context"
 

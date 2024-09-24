@@ -22,6 +22,7 @@ const config= {
     plugins: [
         "@typescript-eslint",
         "@stylistic/ts",
+        "import-newlines",
     ],
     rules: {
         indent: [
@@ -65,6 +66,14 @@ const config= {
                     "type",
                 ],
                 "newlines-between": "always",
+            },
+        ],
+        "import-newlines/enforce": [
+            "error",
+            {
+                items: 2,
+                "max-len": 120,
+                semi: false,
             },
         ],
         "object-curly-spacing": [

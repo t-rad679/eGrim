@@ -2,7 +2,10 @@
 
 import { computed } from "vue"
 
-import { Route, getRouteData } from "@/router/route"
+import {
+    Route,
+    getRouteData,
+} from "@/router/route"
 import { useUserStore } from "@/stores/UserStore"
 
 const userStore = useUserStore()

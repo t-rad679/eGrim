@@ -1,4 +1,7 @@
-import { PrismaClient, User } from "@prisma/client"
+import {
+    PrismaClient,
+    User,
+} from "@prisma/client"
 
 import CookieSessionRequest = CookieSessionInterfaces.CookieSessionRequest;
 

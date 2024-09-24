@@ -3,7 +3,13 @@ import {
     Person,
     PersonUserIdNameCompoundUniqueInput,
 } from "@client-types"
-import { MutateFunction, UseMutationReturn, UseQueryReturn, useMutation, useQuery } from "@vue/apollo-composable"
+import {
+    MutateFunction,
+    UseMutationReturn,
+    UseQueryReturn,
+    useMutation,
+    useQuery,
+} from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 
 import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/globalApiHelper"

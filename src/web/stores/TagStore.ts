@@ -1,8 +1,15 @@
 import { Tag } from "@client-types"
-import { useMutation, useQuery } from "@vue/apollo-composable"
+import {
+    useMutation,
+    useQuery,
+} from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { defineStore } from "pinia"
-import { onBeforeMount, ref, watch } from "vue"
+import {
+    onBeforeMount,
+    ref,
+    watch,
+} from "vue"
 
 import { useUserStore } from "@/stores/UserStore"
 import { DeepPartial } from "@/utils/DeepPartial"

@@ -30,8 +30,8 @@
     "build": "npm run generate-types && vite build",
     "dev": "npm run generate-types && vite",
     "generate-types": "graphql-codegen --config gentypes.yml",
-    "lint": "eslint *.ts **/*.ts App.vue **/*.vue",
-    "lint-fix": "eslint --fix *.ts **/*.ts App.vue **/*.vue",
+    "lint": "eslint --ext .ts,.vue .",
+    "lint-fix": "eslint --fix --ext .ts,.vue .",
     "preview": "npm run generate-types && vite preview"
   },
   "author": "tradical"

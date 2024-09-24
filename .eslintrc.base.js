@@ -23,6 +23,7 @@ const config= {
         "@typescript-eslint",
         "@stylistic/ts",
         "import-newlines",
+        "unused-imports",
     ],
     rules: {
         indent: [
@@ -71,7 +72,7 @@ const config= {
         "import-newlines/enforce": [
             "error",
             {
-                items: 2,
+                items: 1,
                 "max-len": 120,
                 semi: false,
             },
@@ -80,6 +81,7 @@ const config= {
             "error",
             "always",
         ],
+        "unused-imports/no-unused-imports": "error",
         "@stylistic/ts/comma-dangle": [
             "error",
             "always-multiline",

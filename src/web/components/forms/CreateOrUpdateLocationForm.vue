@@ -1,9 +1,19 @@
 <script setup lang="ts">
 
-import { Tag, TagToObjectRelation } from "@client-types"
-import { ref, watch } from "vue"
+import {
+    Tag,
+    TagToObjectRelation,
+} from "@client-types"
+import {
+    ref,
+    watch,
+} from "vue"
 
-import { createUpsertLocationMutation, doLocationQuery, doUpsertLocation } from "@/api/locationApi.js"
+import {
+    createUpsertLocationMutation,
+    doLocationQuery,
+    doUpsertLocation,
+} from "@/api/locationApi.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore"
 import { DeepPartial } from "@/utils/DeepPartial"

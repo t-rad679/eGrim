@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import { ApolloError } from "@apollo/client/core"
-import { Tag, TagToObjectRelation } from "@client-types"
-import { ref, watch } from "vue"
+import {
+    Tag,
+    TagToObjectRelation,
+} from "@client-types"
+import {
+    ref,
+    watch,
+} from "vue"
 
-import { createUpsertPersonMutation, doPersonQuery, doUpsertPerson } from "@/api/personApi"
+import {
+    createUpsertPersonMutation,
+    doPersonQuery,
+    doUpsertPerson,
+} from "@/api/personApi"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore"
 import { DeepPartial } from "@/utils/DeepPartial"

@@ -1,8 +1,14 @@
 import { User } from "@client-types"
-import { provideApolloClient, useMutation } from "@vue/apollo-composable"
+import {
+    provideApolloClient,
+    useMutation,
+} from "@vue/apollo-composable"
 import { gql } from "graphql-tag"
 import { defineStore } from "pinia"
-import { Ref, ref } from "vue"
+import {
+    Ref,
+    ref,
+} from "vue"
 
 import { apolloClient } from "@/main"
 import { DeepPartial } from "@/utils/DeepPartial"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ApolloError } from "@apollo/client/core"
 import {
     computed,
     ref,
@@ -8,13 +9,19 @@ import {
 import { doTagsQuery } from "@/api/tagApi.js"
 import { useUserStore } from "@/stores/UserStore.js"
 
-const userStore = useUserStore()
-const { result, onError: tagQueryOnError } = doTagsQuery(userStore.user.id)
-const dbTags = computed(() => result.value?.tags.map((tag) => tag.name) ?? [])
 const selectedNonDbTags = ref([] as string[])
-const availableTags = computed(() => [...dbTags.value, ...selectedNonDbTags.value])
 const selectedTags = ref([] as string[])
 const search = ref("")
+const userStore = useUserStore()
+
+const { result, onError: tagQueryOnError } = doTagsQuery(userStore.user.id)
+tagQueryOnError((error: ApolloError) => {
+
+    console.log(error)
+})
+
+const dbTags = computed(() => result.value?.tags.map((tag) => tag.name) ?? [])
+const availableTags = computed(() => [...dbTags.value, ...selectedNonDbTags.value])
 
 watch(selectedTags, (newSelectedTags, oldSelectedTags) => {
     selectedNonDbTags.value.push(...newSelectedTags

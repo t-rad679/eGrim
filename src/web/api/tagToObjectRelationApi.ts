@@ -3,6 +3,7 @@ import {
     TagToObjectRelationScalarWhereInput,
 } from "@client-types"
 
+// TODO: See if there's a way to do this with generic types
 type TagToObjectRelationCreateWithoutXInput = {
     tag: TagCreateNestedOneWithoutTagToObjectRelationsInput,
 }
@@ -37,10 +38,8 @@ export function createTagToObjectRelationWhereUniqueInputForMutations(
     tagId: string,
     filterClause: TagToObjectRelationScalarWhereInput,
 ): TagToObjectRelationScalarWhereInput {
-    const deleteValue = {
+    return {
         tagId: { equals: tagId },
         ...filterClause,
     }
-    console.log(deleteValue)
-    return deleteValue
 }

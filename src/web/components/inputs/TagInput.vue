@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue"
 
-import { useTagStore } from "@/stores/TagStore.js"
+import { useTagStore } from "@/stores/TagStore"
 
 const tagStore = useTagStore()
 const dbTags = computed(() => tagStore.tags.map((tag) => tag.name))

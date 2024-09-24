@@ -1,9 +1,11 @@
+import { Tag } from "@client-types"
 import { useMutation, useQuery } from "@vue/apollo-composable"
-import gql from "graphql-tag"
+import { gql } from "graphql-tag"
 import { defineStore } from "pinia"
 import { onBeforeMount, ref, watch } from "vue"
 
-import { useUserStore } from "./UserStore"
+import { useUserStore } from "@/stores/UserStore.js"
+import { DeepPartial } from "@/utils/DeepPartial.js"
 
 const fetchTagsQueryText = gql`
     query fetchTags($userId: String!) {
@@ -24,8 +26,8 @@ const createTagsQueryText = gql`
 
 export const useTagStore = defineStore("tag", () => {
     const userStore = useUserStore()
-    const tags = ref([])
-    const error = ref(null)
+    const tags = ref([] as DeepPartial<Tag>[])
+    const error = ref("")
 
     const { refetch, result: queryResult, error: queryError } = useQuery(fetchTagsQueryText, {
         userId: userStore.user.id,

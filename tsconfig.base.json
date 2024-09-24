@@ -10,11 +10,17 @@
     "outDir": "./out",
     "removeComments": true,
     "importHelpers": true,
+    "alwaysStrict": true,
     "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "noImplicitAny": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
@@ -43,6 +49,6 @@
       }
     ]
   },
-  "exclude": ["./node_modules"],
+  "exclude": ["./node_modules", "./out"],
   "include": ["./src"]
 }

@@ -5,10 +5,12 @@ import {
     watch,
 } from "vue"
 
-import { useTagStore } from "@/stores/TagStore"
+import { doTagsQuery } from "@/api/tagApi.js"
+import { useUserStore } from "@/stores/UserStore.js"
 
-const tagStore = useTagStore()
-const dbTags = computed(() => tagStore.tags.map((tag) => tag.name))
+const userStore = useUserStore()
+const { result, onError: tagQueryOnError } = doTagsQuery(userStore.user.id)
+const dbTags = computed(() => result.value?.tags.map((tag) => tag.name) ?? [])
 const selectedNonDbTags = ref([] as string[])
 const availableTags = computed(() => [...dbTags.value, ...selectedNonDbTags.value])
 const selectedTags = ref([] as string[])

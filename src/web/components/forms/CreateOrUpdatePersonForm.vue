@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ApolloError } from "@apollo/client/core"
 import { Tag, TagToObjectRelation } from "@client-types"
-import { useQuery } from "@vue/apollo-composable"
-import { gql } from "graphql-tag"
 import { computed, ref, watch } from "vue"
 
-import { createUpsertPersonMutation, doUpsertPerson } from "@/api/personApi.js"
+import { createUpsertPersonMutation, doPersonQuery, doUpsertPerson } from "@/api/personApi"
 import TagInput from "@/components/inputs/TagInput.vue"
-import { useUserStore } from "@/stores/UserStore.js"
-import { DeepPartial } from "@/utils/DeepPartial.js"
-import { createFieldRequiredRule } from "@/utils/validationUtils.js"
+import { useUserStore } from "@/stores/UserStore"
+import { DeepPartial } from "@/utils/DeepPartial"
+import { createFieldRequiredRule } from "@/utils/validationUtils"
 
 const props = defineProps({
     personName: {
@@ -27,60 +25,38 @@ const tags = ref([] as string[])
 const errorMessages = ref([] as string[])
 const success = ref(false)
 
+const newlySelectedTags = computed(
+    () => tags.value.filter((tag) => !oldTags.map((tag) => tag.name ?? "").includes(tag)),
+)
+
 let personId = ""
+let oldTags: DeepPartial<Tag>[] = []
+
+const nameRules = [createFieldRequiredRule("Name")]
 const printErrorFunction = (error: ApolloError) => {
     console.log(error)
     errorMessages.value.push(error.message)
     success.value = false
+
 }
 
-const nameRules = [createFieldRequiredRule("Name")]
-
-const { mutate, onDone, onError } = createUpsertPersonMutation()
-
+const { mutate, onDone, onError: upsertPersonOnError } = createUpsertPersonMutation()
 onDone(() => {
     success.value = true
 })
-onError(printErrorFunction)
+upsertPersonOnError(printErrorFunction)
 
-const personQueryText = gql`
-        query person($where: PersonWhereUniqueInput!) {
-            person(where: $where) {
-                id
-                name
-                description
-                tags {
-                    tag {
-                        id
-                        name
-                    }
-                }
-            }
-        }
-    `
-const { result, onError: personQueryOnError } = useQuery(personQueryText, {
-    where: {
-        userId_name: {
-            name: props.personName,
-            userId: userStore.user.id,
-        },
-    },
-})
-
+const { result, onError: personQueryOnError } = doPersonQuery(props.personName, userStore.user.id)
 personQueryOnError(printErrorFunction)
 
-let oldTags: DeepPartial<Tag>[] = []
-const newlySelectedTags = computed(
-    () => tags.value.filter((tag) => !oldTags.map((tag) => tag.name ?? "").includes(tag)),
-)
 const newlyRemovedTags = computed(() => oldTags.filter((tag) => !tags.value.includes(tag.name ?? "")))
 watch(result, (newResult) => {
-    if (newResult.person) {
+    if (newResult?.person) {
         name.value = newResult.person.name
         personId = newResult.person.id
-        description.value = newResult.person.description
-        tags.value = newResult.person.tags?.map((tag: DeepPartial<TagToObjectRelation>) => tag?.tag?.name) ?? []
-        oldTags = newResult.person.tags?.map((tag: DeepPartial<TagToObjectRelation>) => tag?.tag) ?? []
+        description.value = newResult.person.description ?? ""
+        tags.value = newResult.person.tags?.map((tag: TagToObjectRelation) => tag.tag.name) ?? []
+        oldTags = newResult.person.tags?.map((tag: TagToObjectRelation) => tag.tag) ?? []
     } else {
         console.log("No person found")
     }

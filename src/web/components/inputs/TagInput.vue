@@ -6,7 +6,7 @@ import {
     watch,
 } from "vue"
 
-import { doTagsQuery } from "@/api/tagApi.js"
+import { doTagsQuery } from "@/api/tag/queries/fetchTags.js"
 import { useUserStore } from "@/stores/UserStore.js"
 
 const selectedNonDbTags = ref([] as string[])

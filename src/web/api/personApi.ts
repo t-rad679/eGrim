@@ -17,7 +17,7 @@ import {
     createTagToObjectRelationCreateOrConnectInputForMutations,
     createTagToObjectRelationWhereUniqueInputForMutations,
 } from "@/api/tagToObjectRelationApi"
-import { createUserWhereUniqueInputForMutations } from "@/api/userApi"
+import { createUserWhereUniqueInputForMutations } from "@/api/user/userApiHelper"
 
 interface QueryGetPersonResult {
     person: Person,

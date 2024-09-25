@@ -11,9 +11,9 @@ import {
 
 import {
     createUpsertLocationMutation,
-    doLocationQuery,
     doUpsertLocation,
-} from "@/api/locationApi.js"
+} from "@/api/location/mutations/upsertLocation.js"
+import { doLocationQuery } from "@/api/location/queries/fetchLocation.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore"
 import { DeepPartial } from "@/utils/DeepPartial"

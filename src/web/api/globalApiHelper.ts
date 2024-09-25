@@ -1,13 +1,14 @@
-import {
-    LocationWhereUniqueInput,
-    PersonWhereUniqueInput,
-} from "@client-types"
+interface UserIdNameCompoundUniqueInput {
+    userId_name: {
+        userId: string,
+        name: string,
+    }
+}
 
-type XWhereUniqueInput = LocationWhereUniqueInput | PersonWhereUniqueInput
 export function createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne(
     userId: string,
     name: string,
-): XWhereUniqueInput{
+): UserIdNameCompoundUniqueInput{
     return {
         userId_name: {
             userId,

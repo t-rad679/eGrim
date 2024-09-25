@@ -11,9 +11,9 @@ import {
 
 import {
     createUpsertPersonMutation,
-    doPersonQuery,
     doUpsertPerson,
-} from "@/api/personApi"
+} from "@/api/person/mutations/upsertPerson.js"
+import { doPersonQuery } from "@/api/person/queries/fetchPerson.js"
 import TagInput from "@/components/inputs/TagInput.vue"
 import { useUserStore } from "@/stores/UserStore"
 import { DeepPartial } from "@/utils/DeepPartial"

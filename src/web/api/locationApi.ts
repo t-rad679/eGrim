@@ -16,7 +16,7 @@ import { createUserIdNameCompoundUniqueInputForUpdateOrUpsertOne } from "@/api/g
 import {
     createTagToObjectRelationCreateOrConnectInputForMutations,
     createTagToObjectRelationWhereUniqueInputForMutations,
-} from "@/api/tagToObjectRelationApi.js"
+} from "@/api/tagToObjectRelation/tagToObjectRelationApiHelper.js"
 import { createUserWhereUniqueInputForMutations } from "@/api/user/userApiHelper"
 
 interface QueryGetLocationResult {

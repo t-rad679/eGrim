@@ -82,6 +82,7 @@ const config= {
             "always",
         ],
         "unused-imports/no-unused-imports": "error",
+        "eol-last": ["error", "always"],
         "@stylistic/ts/comma-dangle": [
             "error",
             "always-multiline",

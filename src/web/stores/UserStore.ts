@@ -1,15 +1,23 @@
+import { ApolloQueryResult } from "@apollo/client"
+import { ApolloError } from "@apollo/client/core"
 import { User } from "@client-types"
-import {
-    provideApolloClient,
-    useMutation,
-} from "@vue/apollo-composable"
-import { gql } from "graphql-tag"
+import { provideApolloClient } from "@vue/apollo-composable"
 import { defineStore } from "pinia"
 import {
     Ref,
     ref,
 } from "vue"
 
+import {
+    LoginResult,
+    createLoginMutation,
+    doLogin,
+} from "@/api/user/mutations/loginMutation"
+import {
+    RegisterResult,
+    createRegisterMutation,
+    doRegister,
+} from "@/api/user/mutations/registerMutation"
 import { apolloClient } from "@/main"
 import { DeepPartial } from "@/utils/DeepPartial"
 
@@ -46,37 +54,25 @@ export const useUserStore = defineStore("user", () => {
 type loginFn = (username: string, password: string) => void
 
 function setupLoginAction(user: Ref<DeepPartial<User>>): loginFn {
-    const loginMutationText = gql`
-        mutation login($user: String!, $pass: String!) {
-            login(username: $user, password: $pass) {
-                id
-                username
-                self {
-                    name
-                }
-            }
-        }
-    `
     const {
         mutate,
         onDone,
         onError,
-    } = useMutation(loginMutationText)
+    } = createLoginMutation()
 
     async function login(username: string, password: string) {
-        await mutate({
-            user: username,
-            pass: password,
-        })
+        await doLogin(mutate, username, password)
     }
 
-    onDone((result) => {
-        user.value = result.data.login
-        localStorage.setItem("user", JSON.stringify(user.value))
+    onDone((result: ApolloQueryResult<LoginResult>) => {
+        if(result?.data?.login) {
+            user.value = result.data.login
+            localStorage.setItem("user", JSON.stringify(user.value))
+        }
     })
 
-    onError((error) => {
-        console.log(`Failed to log in: ${error.message}`)
+    onError((error: ApolloError) => {
+        console.log(`Failed to log in: ${error}`)
         // TODO: Make a tooltip pop up
         // https://github.com/cornflourblue/vue-3-pinia-registration-login-example/blob/master/src/stores/alert.store.js
         // may be helpful
@@ -88,38 +84,30 @@ function setupLoginAction(user: Ref<DeepPartial<User>>): loginFn {
 type registerFn = (username: string, password: string, name?: string) => void
 
 function setupRegisterAction(user: Ref<DeepPartial<User>>): registerFn {
-    const registerMutationText = gql`
-        mutation register($user: String!, $pass: String!, $name: String!) {
-            register(username: $user, password: $pass, name: $name) {
-                id
-                username
-                self {
-                    name
-                }
-            }
-        }
-    `
     const {
         mutate,
         onDone,
         onError,
-    } = useMutation(registerMutationText)
+    } = createRegisterMutation()
 
     async function register(username: string, password: string, name?: string) {
-        await mutate({
-            user: username,
-            pass: password,
+        await doRegister(
+            mutate,
+            username,
+            password,
             name,
-        })
+        )
     }
 
-    onDone((result => {
-        user.value = result.data.register
-        localStorage.setItem("user", JSON.stringify(user.value))
-    }))
+    onDone((result: ApolloQueryResult<RegisterResult>) => {
+        if (result?.data?.register) {
+            user.value = result.data.register
+            localStorage.setItem("user", JSON.stringify(user.value))
+        }
+    })
 
-    onError((error) => {
-        console.log(`Failed to register: ${error.message}`)
+    onError((error: ApolloError) => {
+        console.log(`Failed to register: ${error}`)
         // TODO: Tooltip
     })
 

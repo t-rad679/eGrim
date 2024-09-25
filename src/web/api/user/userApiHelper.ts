@@ -1,4 +1,3 @@
-
 import { UserCreateNestedOneWithoutPeopleInput } from "@client-types"
 
 type UserCreateNestedOneWithoutXInput = (

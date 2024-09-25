@@ -17,7 +17,7 @@ import {
     createTagToObjectRelationCreateOrConnectInputForMutations,
     createTagToObjectRelationWhereUniqueInputForMutations,
 } from "@/api/tagToObjectRelationApi.js"
-import { createUserWhereUniqueInputForMutations } from "@/api/userApi.js"
+import { createUserWhereUniqueInputForMutations } from "@/api/user/userApiHelper"
 
 interface QueryGetLocationResult {
     location: Location,

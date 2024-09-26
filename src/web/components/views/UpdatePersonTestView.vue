@@ -4,7 +4,6 @@ import CreateOrUpdatePersonForm from "@/components/forms/CreateOrUpdatePersonFor
 </script>
 
 <template>
-  <h2>Update Person</h2>
   <CreateOrUpdatePersonForm person-name="Tori Williams" />
 </template>
 

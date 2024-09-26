@@ -108,31 +108,32 @@ function onSubmit() {
     class="w-50"
     @submit.prevent="onSubmit"
   >
+    <h2>{{ props.locationName ? "Update" : "Create" }} Location</h2>
     <v-text-field
       v-model="name"
       :rules="nameRules"
-      label="The name you want to identify this location by"
+      label="Name"
       class="required"
     />
     <v-text-field
       v-model="address"
-      label="The street address of the location"
+      label="Street address"
     />
     <v-text-field
       v-model="city"
-      label="The city of the location"
+      label="City"
     />
     <v-text-field
       v-model="state"
-      label="The state or province of the location"
+      label="State or Province; should be two letter code, if applicable"
     />
     <v-text-field
       v-model="zip"
-      label="The postal code of the location"
+      label="Postal code"
     />
     <v-text-field
       v-model="country"
-      label="The three letter country code of the location"
+      label="Three letter country code"
     />
     <v-text-field
       v-model="description"
@@ -140,7 +141,7 @@ function onSubmit() {
     />
     <TagInput v-model="tags" />
     <v-btn type="submit">
-      Create Location
+      {{ props.locationName ? "Save" : "Create" }}
     </v-btn>
   </v-form>
   {{ success }}

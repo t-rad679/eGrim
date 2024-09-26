@@ -4,7 +4,6 @@ import CreateOrUpdateLocationForm from "@/components/forms/CreateOrUpdateLocatio
 </script>
 
 <template>
-  <h2>Update Location</h2>
   <CreateOrUpdateLocationForm location-name="Home" />
 </template>
 

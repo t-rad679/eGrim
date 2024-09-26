@@ -89,6 +89,7 @@ function onSubmit() {
     clas="w-50"
     @submit.prevent="onSubmit"
   >
+    <h2>{{ props.personName ? "Update" : "Create" }} Person</h2>
     <v-text-field
       v-model="name"
       :rules="nameRules"
@@ -103,7 +104,7 @@ function onSubmit() {
     <v-btn
       type="submit"
     >
-      {{ props.personName ? "Update" : "Create" }} Person
+      {{ props.personName ? "Save" : "Create" }}
     </v-btn>
   </v-form>
   <p v-if="errorMessages">

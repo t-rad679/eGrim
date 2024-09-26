@@ -187,6 +187,7 @@ model Ritual {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
+  observances              RitualObservance[]
   stepsOfThisRitual        RitualStep[]           @relation("RitualSteps")
   stepsThisRitualComprises RitualStep[]           @relation("RitualStepComposition")
   tags                     TagToObjectRelation[]
@@ -228,10 +229,14 @@ model RitualObservance {
 
   event         Event                                           @relation(fields: [eventId], references: [id])
   eventId       String                                          @unique
+  ritual        Ritual                                          @relation(fields: [ritualId], references: [id])
+  ritualId      String
   // TODO: validate that querent and reader are in participants for tarot readings
   participants  ParticipantPersonToRitualObservanceRelation[]
   results       RitualResult[]
   tarotReadings TarotReadingToRitualObservanceAndStepRelation[]
+
+  notes String?
 }
 
 model RitualResult {
@@ -435,6 +440,8 @@ model TarotReadingToRitualObservanceAndStepRelation {
   ritualStepId       String
   tarotReading       TarotReading     @relation(fields: [tarotReadingId], references: [id])
   tarotReadingId     String
+
+  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 
   @@id([ritualObservanceId, ritualStepId, tarotReadingId])
 }

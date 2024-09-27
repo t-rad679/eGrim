@@ -313,7 +313,7 @@ model TarotReading {
   updatedAt DateTime @updatedAt
 
   cardsDrawn                                    TarotCardDraw[]
-  // TODO: Validate that both exist in the resolver. Make field resolvers for them
+  // TODO: Validate that both exist. Make field resolvers for them
   querentAndReaderRelations                     PersonTarotRoleRelation[]
   tarotReadingToRitualObservanceAndStepRelation TarotReadingToRitualObservanceAndStepRelation[]
 
@@ -386,21 +386,89 @@ model TarotCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  suit          TarotSuit
-  tags          TagToObjectRelation[]
-  tarotDeckCard TarotDeckCard[]
+  // TODO: Validate that, if MAN is populated, suit is "Major Arcana" and rank is not populated. Vice vs if it is not.
+  majorArcanaNumber   MajorArcanaNumber? @relation(fields: [majorArcanaNumberId], references: [id])
+  majorArcanaNumberId String?
+  rank                TarotRank?         @relation(fields: [rankId], references: [id])
+  rankId              String?
+  suit                TarotSuit          @relation(fields: [suitId], references: [id])
+  suitId              String
 
-  name   String
-  notes  String
-  number Int
+  tarotDeckCard TarotDeckCard[]
+  tags          TagToObjectRelation[]
+
+  name                  String
+  notes                 String?
+  commonMeaning         String?
+  commonReversedMeaning String?
+
+  @@unique([majorArcanaNumberId, rankId, suitId], name: "TarotCardCompoundId")
 }
 
-enum TarotSuit {
-  CUPS
-  PENTACLES
-  SWORDS
-  WANDS
-  MAJOR_ARCANA
+model TarotSuit {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cards   TarotCard[]
+  aliases TarotSuitAlias[]
+
+  name  String
+  notes String?
+}
+
+model TarotSuitAlias {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deck   TarotDeck @relation(fields: [deckId], references: [id])
+  deckId String
+  suit   TarotSuit @relation(fields: [suitId], references: [id])
+  suitId String
+
+  name String
+
+  @@unique([deckId, suitId], name: "TarotSuitAliasCompoundId")
+}
+
+model TarotRank {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cards TarotCard[]
+
+  number Int     @unique // TODO: Validate range 1-14
+  name   String  @unique
+  notes  String?
+}
+
+model MajorArcanaNumber {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cards   TarotCard[]
+  aliases MajorArcanaAlias[]
+
+  number Int    @unique
+  notes  String
+}
+
+model MajorArcanaAlias {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deck     TarotDeck         @relation(fields: [deckId], references: [id])
+  deckId   String
+  number   MajorArcanaNumber @relation(fields: [numberId], references: [id])
+  numberId String
+
+  name String
+
+  @@unique([deckId, numberId], name: "MajorArcanaAliasCompoundId")
 }
 
 model TarotDeckCard {
@@ -414,8 +482,10 @@ model TarotDeckCard {
   tarotDeck   TarotDeck             @relation(fields: [tarotDeckId], references: [id])
   tarotDeckId String
 
-  notes    String
-  pictures String
+  alias           String?
+  meaning         String?
+  picture         String?
+  reversedMeaning String?
 }
 
 model TarotDeck {
@@ -426,11 +496,14 @@ model TarotDeck {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
-  tags  TagToObjectRelation[]
-  cards TarotDeckCard[]
+  cards              TarotDeckCard[]
+  majorArcanaAliases MajorArcanaAlias[]
+  suitAliases        TarotSuitAlias[]
+  tags               TagToObjectRelation[]
 
-  name  String
-  notes String
+  name     String
+  notes    String?
+  pictures String[]
 }
 
 model TarotReadingToRitualObservanceAndStepRelation {
@@ -445,3 +518,5 @@ model TarotReadingToRitualObservanceAndStepRelation {
 
   @@id([ritualObservanceId, ritualStepId, tarotReadingId])
 }
+
+// TODO: Support Oracle decks

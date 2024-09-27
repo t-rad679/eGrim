@@ -10,9 +10,6 @@ CREATE TYPE "RitualRole" AS ENUM ('LEADER', 'PARTICIPANT', 'SPECTATOR');
 -- CreateEnum
 CREATE TYPE "TarotRole" AS ENUM ('QUERENT', 'READER');
 
--- CreateEnum
-CREATE TYPE "TarotSuit" AS ENUM ('CUPS', 'PENTACLES', 'SWORDS', 'WANDS', 'MAJOR_ARCANA');
-
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -258,12 +255,73 @@ CREATE TABLE "TarotCard" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "suit" "TarotSuit" NOT NULL,
+    "majorArcanaNumberId" TEXT,
+    "rankId" TEXT,
+    "suitId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "notes" TEXT NOT NULL,
-    "number" INTEGER NOT NULL,
+    "notes" TEXT,
+    "commonMeaning" TEXT,
+    "commonReversedMeaning" TEXT,
 
     CONSTRAINT "TarotCard_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TarotSuit" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "name" TEXT NOT NULL,
+    "notes" TEXT,
+
+    CONSTRAINT "TarotSuit_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TarotSuitAlias" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deckId" TEXT NOT NULL,
+    "suitId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "TarotSuitAlias_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TarotRank" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "number" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "notes" TEXT,
+
+    CONSTRAINT "TarotRank_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MajorArcanaNumber" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "number" INTEGER NOT NULL,
+    "notes" TEXT NOT NULL,
+
+    CONSTRAINT "MajorArcanaNumber_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MajorArcanaAlias" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deckId" TEXT NOT NULL,
+    "numberId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "MajorArcanaAlias_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -273,8 +331,10 @@ CREATE TABLE "TarotDeckCard" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "cardId" TEXT NOT NULL,
     "tarotDeckId" TEXT NOT NULL,
-    "notes" TEXT NOT NULL,
-    "pictures" TEXT NOT NULL,
+    "alias" TEXT,
+    "meaning" TEXT,
+    "picture" TEXT,
+    "reversedMeaning" TEXT,
 
     CONSTRAINT "TarotDeckCard_pkey" PRIMARY KEY ("id")
 );
@@ -286,7 +346,7 @@ CREATE TABLE "TarotDeck" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "notes" TEXT NOT NULL,
+    "notes" TEXT,
 
     CONSTRAINT "TarotDeck_pkey" PRIMARY KEY ("id")
 );
@@ -327,6 +387,24 @@ CREATE UNIQUE INDEX "RitualObservance_eventId_key" ON "RitualObservance"("eventI
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RitualResult_ritualObservanceId_key" ON "RitualResult"("ritualObservanceId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TarotCard_majorArcanaNumberId_rankId_suitId_key" ON "TarotCard"("majorArcanaNumberId", "rankId", "suitId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TarotSuitAlias_deckId_suitId_key" ON "TarotSuitAlias"("deckId", "suitId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TarotRank_number_key" ON "TarotRank"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TarotRank_name_key" ON "TarotRank"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MajorArcanaNumber_number_key" ON "MajorArcanaNumber"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MajorArcanaAlias_deckId_numberId_key" ON "MajorArcanaAlias"("deckId", "numberId");
 
 -- AddForeignKey
 ALTER TABLE "Event" ADD CONSTRAINT "Event_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -447,6 +525,27 @@ ALTER TABLE "TarotCardDraw" ADD CONSTRAINT "TarotCardDraw_positionId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "TarotCardDraw" ADD CONSTRAINT "TarotCardDraw_tarotReadingId_fkey" FOREIGN KEY ("tarotReadingId") REFERENCES "TarotReading"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TarotCard" ADD CONSTRAINT "TarotCard_majorArcanaNumberId_fkey" FOREIGN KEY ("majorArcanaNumberId") REFERENCES "MajorArcanaNumber"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TarotCard" ADD CONSTRAINT "TarotCard_rankId_fkey" FOREIGN KEY ("rankId") REFERENCES "TarotRank"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TarotCard" ADD CONSTRAINT "TarotCard_suitId_fkey" FOREIGN KEY ("suitId") REFERENCES "TarotSuit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TarotSuitAlias" ADD CONSTRAINT "TarotSuitAlias_deckId_fkey" FOREIGN KEY ("deckId") REFERENCES "TarotDeck"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TarotSuitAlias" ADD CONSTRAINT "TarotSuitAlias_suitId_fkey" FOREIGN KEY ("suitId") REFERENCES "TarotSuit"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MajorArcanaAlias" ADD CONSTRAINT "MajorArcanaAlias_deckId_fkey" FOREIGN KEY ("deckId") REFERENCES "TarotDeck"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MajorArcanaAlias" ADD CONSTRAINT "MajorArcanaAlias_numberId_fkey" FOREIGN KEY ("numberId") REFERENCES "MajorArcanaNumber"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TarotDeckCard" ADD CONSTRAINT "TarotDeckCard_cardId_fkey" FOREIGN KEY ("cardId") REFERENCES "TarotCard"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

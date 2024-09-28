@@ -386,23 +386,22 @@ model TarotCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // TODO: Validate that, if MAN is populated, suit is "Major Arcana" and rank is not populated. Vice vs if it is not.
-  majorArcanaNumber   MajorArcanaNumber? @relation(fields: [majorArcanaNumberId], references: [id])
-  majorArcanaNumberId String?
-  rank                TarotRank?         @relation(fields: [rankId], references: [id])
-  rankId              String?
-  suit                TarotSuit          @relation(fields: [suitId], references: [id])
-  suitId              String
+  // TODO: Validate that, if MAI is populated, suit and rank are not. Vice vs if MAI is empty.
+  majorArcanaInfo   MajorArcanaInfo? @relation(fields: [majorArcanaInfoId], references: [id])
+  majorArcanaInfoId String?
+  rank              TarotRank?       @relation(fields: [rankId], references: [id])
+  rankId            String?
+  suit              TarotSuit?       @relation(fields: [suitId], references: [id])
+  suitId            String?
 
   tarotDeckCard TarotDeckCard[]
   tags          TagToObjectRelation[]
 
-  name                  String
   notes                 String?
   commonMeaning         String?
   commonReversedMeaning String?
 
-  @@unique([majorArcanaNumberId, rankId, suitId], name: "TarotCardCompoundId")
+  @@unique([majorArcanaInfoId, rankId, suitId], name: "TarotCardCompoundId")
 }
 
 model TarotSuit {
@@ -444,7 +443,7 @@ model TarotRank {
   notes  String?
 }
 
-model MajorArcanaNumber {
+model MajorArcanaInfo {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -452,8 +451,9 @@ model MajorArcanaNumber {
   cards   TarotCard[]
   aliases MajorArcanaAlias[]
 
-  number Int    @unique
-  notes  String
+  number Int     @unique
+  name   String  @unique
+  notes  String?
 }
 
 model MajorArcanaAlias {
@@ -461,14 +461,14 @@ model MajorArcanaAlias {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  deck     TarotDeck         @relation(fields: [deckId], references: [id])
-  deckId   String
-  number   MajorArcanaNumber @relation(fields: [numberId], references: [id])
-  numberId String
+  deck              TarotDeck       @relation(fields: [deckId], references: [id])
+  deckId            String
+  majorArcanaInfo   MajorArcanaInfo @relation(fields: [majorArcanaInfoId], references: [id])
+  majorArcanaInfoId String
 
   name String
 
-  @@unique([deckId, numberId], name: "MajorArcanaAliasCompoundId")
+  @@unique([deckId, majorArcanaInfoId], name: "MajorArcanaAliasCompoundId")
 }
 
 model TarotDeckCard {

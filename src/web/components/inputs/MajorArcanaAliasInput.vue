@@ -1,55 +1,54 @@
 <script setup lang="ts">
-import { TarotSuitAlias } from "@client-types"
+import { MajorArcanaAlias } from "@client-types"
 import {
     computed,
-    defineModel,
     ref,
     watch,
 } from "vue"
 
-import { doAllTarotSuitsQuery } from "@/api/tarotSuit/queries/fetchAllTarotSuits.js"
-import { DeepPartial } from "@/utils/DeepPartial"
+import { doAllMajorArcanaInfosQuery } from "@/api/majorArcanaInfo/queries/fetchAllMajorArcanaInfos.js"
+import { DeepPartial } from "@/utils/DeepPartial.js"
 import { createFieldRequiredRule } from "@/utils/validationUtils.js"
 
 const emit = defineEmits(["remove"])
-const modelValue = defineModel<DeepPartial<TarotSuitAlias>>({ required: true })
+const modelValue = defineModel<DeepPartial<MajorArcanaAlias>>({ required: true })
 const props = defineProps({
     index: {
         type: Number,
         required: true,
     },
-    alreadyUsedSuits: {
+    alreadyUsedArcana: {
         type: Array<string>,
         required: false,
         default: [],
     },
 })
 
-const selectedSuit = ref(modelValue.value.suit?.name)
+const selectedArcana = ref(modelValue.value.majorArcanaInfo?.name)
 const currentAlias = ref(modelValue.value.name)
 
-watch([selectedSuit, currentAlias], ([newSuit, newAlias]) => {
+watch([selectedArcana, currentAlias], ([newArcana, newAlias]) => {
     modelValue.value = {
-        suit: {
-            name: newSuit,
+        majorArcanaInfo: {
+            name: newArcana,
         },
         name: newAlias,
     }
 })
 
-const { result, onError } = doAllTarotSuitsQuery()
+const { result, onError } = doAllMajorArcanaInfosQuery()
 
-const suits = computed(() => (
-    result.value?.tarotSuits?.map((suit) => suit.name).filter((suit) => (
-        !props.alreadyUsedSuits?.includes(suit)
+const arcanaToBeDisplayed = computed(() => (
+    result.value?.majorArcanaInfos?.map((arcana) => arcana.name).filter((arcana) => (
+        !props.alreadyUsedArcana?.includes(arcana)
     )) || []
 ))
 
 onError((error) => {
-    console.log(error)
+    console.error(error)
 })
 
-const suitRules = [createFieldRequiredRule("Suit")]
+const arcanaRules = [createFieldRequiredRule("Arcana")]
 const aliasRules = [createFieldRequiredRule("Alias")]
 </script>
 <template>
@@ -57,22 +56,21 @@ const aliasRules = [createFieldRequiredRule("Alias")]
     <v-row>
       <v-col cols="5">
         <v-select
-          v-model="selectedSuit"
-          :items="suits"
-          :rules="suitRules"
+          v-model="selectedArcana"
+          :items="arcanaToBeDisplayed"
+          label="Arcana"
+          :rules="arcanaRules"
           item-text="name"
           item-value="id"
-          label="Tarot Suit"
-          outlined
           class="required"
+          outlined
         />
       </v-col>
       <v-col cols="5">
         <v-text-field
           v-model="currentAlias"
-          :rules="aliasRules"
           label="Alias"
-          outlined
+          :rules="aliasRules"
           class="required"
         />
       </v-col>

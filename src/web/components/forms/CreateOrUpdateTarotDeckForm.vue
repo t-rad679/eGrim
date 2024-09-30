@@ -10,6 +10,7 @@ import {
     ref,
     watch,
 } from "vue"
+import { VForm } from "vuetify/components" // Ensure MDI icons are imported
 
 import {
     createUpsertTarotDeckMutation,
@@ -22,7 +23,7 @@ import { useUserStore } from "@/stores/UserStore.js"
 import { DeepPartial } from "@/utils/DeepPartial.js"
 import { createFieldRequiredRule } from "@/utils/validationUtils.js"
 import "vuetify/styles"
-import "@mdi/font/css/materialdesignicons.css" // Ensure MDI icons are imported
+import "@mdi/font/css/materialdesignicons.css"
 
 const props = defineProps({
     deckName: {
@@ -39,6 +40,7 @@ const suitAliases = ref([] as DeepPartial<TarotSuitAlias>[])
 const success = ref(false)
 const isFormValid = ref(false)
 
+const suitNames = computed(() => suitAliases.value.map((alias) => alias.suit?.name ?? ""))
 const isFormChanged = computed(() => {
     return (
         name.value !== originalFormState.name ||
@@ -143,7 +145,7 @@ function onSubmit() {
 <template>
   <v-form
     v-model="isFormValid"
-    validate-on="blur"
+    validate-on="input"
     class="w-75"
     @submit.prevent="onSubmit"
   >
@@ -172,11 +174,13 @@ function onSubmit() {
         <TarotSuitAliasInput
           v-model="suitAliases[index]"
           :index="index"
+          :already-used-suits="suitNames"
           @remove="removeSuitAlias"
         />
       </v-list-item>
     </v-list>
     <v-btn
+      v-if="suitAliases.length < 4"
       icon="true"
       @click="addSuitAlias"
     >
@@ -190,8 +194,23 @@ function onSubmit() {
       {{ props.deckName ? "Save" : "Create" }}
     </v-btn>
     {{ success ? "Success!" : "" }}
-    <div v-if="!isFormValid">
+    <v-alert
+      v-if="!isFormValid"
+      icon="$error"
+      color="error"
+      theme="dark"
+      variant="tonal"
+    >
       Please fill out all required fields.
-    </div>
+    </v-alert>
+    <v-alert
+      v-if="!isFormChanged"
+      icon="$warning"
+      color="warning"
+      theme="dark"
+      variant="tonal"
+    >
+      No changes made.
+    </v-alert>
   </v-form>
 </template>

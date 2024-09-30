@@ -18,6 +18,11 @@ const props = defineProps({
         type: Number,
         required: true,
     },
+    alreadyUsedSuits: {
+        type: Array<string>,
+        required: false,
+        default: [],
+    },
 })
 
 const selectedSuit = ref(modelValue.value.suit?.name)
@@ -41,7 +46,11 @@ watch(currentAlias, (newAlias) => {
 })
 const { result, onError } = doAllTarotSuitsQuery()
 
-const suits = computed(() => result.value?.tarotSuits?.map((suit) => suit.name) || [])
+const suits = computed(() => (
+    result.value?.tarotSuits?.map((suit) => suit.name).filter((suit) => (
+        !props.alreadyUsedSuits?.includes(suit)
+    )) || []
+))
 onError((error) => {
     console.log(error)
 })
@@ -59,7 +68,7 @@ const aliasRules = [createFieldRequiredRule("Alias")]
           :rules="suitRules"
           item-text="name"
           item-value="id"
-          label="Select Tarot Suit"
+          label="Tarot Suit"
           outlined
           class="required"
         />

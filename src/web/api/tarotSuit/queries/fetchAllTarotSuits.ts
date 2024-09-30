@@ -18,5 +18,5 @@ const FETCH_ALL_TAROT_SUITS = gql`
 `
 
 export function doAllTarotSuitsQuery(): UseQueryReturn<QueryFetchAllTarotSuitsResult, {}> {
-    return useQuery<{ tarotSuits: TarotSuit[] }>(FETCH_ALL_TAROT_SUITS)
+    return useQuery<QueryFetchAllTarotSuitsResult>(FETCH_ALL_TAROT_SUITS)
 }

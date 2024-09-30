@@ -72,18 +72,34 @@ function handleLogout() {
             </v-btn>
           </router-link>
           <router-link
-            :to="getRouteData(Route.LOGIN).path"
-          >
-            <v-btn @click="handleLogout">
-              Logout
-            </v-btn>
-          </router-link>
-          <router-link
             v-slot="{ navigate }"
             :to="getRouteData(Route.UPDATE_LOCATION).path"
           >
             <v-btn @click="navigate">
               Update Location
+            </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.CREATE_DECK).path"
+          >
+            <v-btn @click="navigate">
+              Create Tarot Deck
+            </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.UPDATE_DECK).path"
+          >
+            <v-btn @click="navigate">
+              Update Tarot Deck
+            </v-btn>
+          </router-link>
+          <router-link
+            :to="getRouteData(Route.LOGIN).path"
+          >
+            <v-btn @click="handleLogout">
+              Logout
             </v-btn>
           </router-link>
         </template>

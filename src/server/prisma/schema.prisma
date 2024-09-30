@@ -5,7 +5,7 @@ generator client {
 generator typegraphql {
   provider                  = "typegraphql-prisma"
   emitRedundantTypesInfo    = true
-  omitInputFieldsByDefault  = ["id", "createdAt", "updatedAt", "moonPhase"]
+  omitInputFieldsByDefault  = ["createdAt", "updatedAt"]
   omitOutputFieldsByDefault = ["passwordHash"]
   output                    = "../../../out/type-graphql"
 }
@@ -56,7 +56,7 @@ model Event {
   type             EventType
 
   date        DateTime
-  description String
+  description String?
   // TODO: Consider making a model for this
   mood        String?
   // TODO: Consider adding more astrological data?
@@ -216,7 +216,7 @@ model RitualStep {
   tags                               TagToObjectRelation[]
   tarotReadingsDoneForThisRitualStep TarotReadingToRitualObservanceAndStepRelation[]
 
-  description String
+  description String?
   number      Int
 
   @@unique([ritualId, number])
@@ -317,6 +317,13 @@ model TarotReading {
   querentAndReaderRelations                     PersonTarotRoleRelation[]
   tarotReadingToRitualObservanceAndStepRelation TarotReadingToRitualObservanceAndStepRelation[]
 
+  deck     TarotDeck   @relation(fields: [deckId], references: [id])
+  deckId   String
+  spread   TarotSpread @relation(fields: [spreadId], references: [id])
+  spreadId String
+
+  name String?
+
   dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 }
 
@@ -328,7 +335,7 @@ model PersonTarotRoleRelation {
 
   role TarotRole
 
-  @@id([personId, role, tarotReadingId])
+  @@id([personId, tarotReadingId], name: "PersonTarotRoleRelationCompoundId")
 }
 
 enum TarotRole {
@@ -345,11 +352,14 @@ model TarotSpread {
   userId String
 
   positions   TarotPosition[]
+  readings    TarotReading[]
   ritualSteps RitualStep[]
   tags        TagToObjectRelation[]
 
-  name        String
-  description String
+  name  String
+  notes String?
+
+  @@unique([userId, name])
 }
 
 model TarotPosition {
@@ -363,8 +373,10 @@ model TarotPosition {
   cardsDrawn TarotCardDraw[]
   tags       TagToObjectRelation[]
 
-  description String
+  description String?
   number      Int
+
+  @@unique([tarotSpreadId, number], name: "TarotPositionCompoundId")
 }
 
 model TarotCardDraw {
@@ -372,6 +384,8 @@ model TarotCardDraw {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  card           TarotDeckCard         @relation(fields: [cardId], references: [id])
+  cardId         String
   position       TarotPosition         @relation(fields: [positionId], references: [id])
   positionId     String
   tags           TagToObjectRelation[]
@@ -476,11 +490,13 @@ model TarotDeckCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  card        TarotCard             @relation(fields: [cardId], references: [id])
+  card        TarotCard @relation(fields: [cardId], references: [id])
   cardId      String
-  tags        TagToObjectRelation[]
-  tarotDeck   TarotDeck             @relation(fields: [tarotDeckId], references: [id])
+  tarotDeck   TarotDeck @relation(fields: [tarotDeckId], references: [id])
   tarotDeckId String
+
+  draws TarotCardDraw[]
+  tags  TagToObjectRelation[]
 
   alias           String?
   meaning         String?
@@ -500,6 +516,7 @@ model TarotDeck {
 
   cards              TarotDeckCard[]
   majorArcanaAliases MajorArcanaAlias[]
+  readings           TarotReading[]
   suitAliases        TarotSuitAlias[]
   tags               TagToObjectRelation[]
 

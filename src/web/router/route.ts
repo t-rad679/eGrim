@@ -1,12 +1,13 @@
 import { Component } from "vue"
 
 import CreateLocationForm from "@/components/forms/CreateOrUpdateLocationForm.vue"
+import CreateOrUpdateTarotDeckForm from "@/components/forms/CreateOrUpdateTarotDeckForm.vue"
 import CreatePersonView from "@/components/views/CreatePersonView.vue"
 import LoginView from "@/components/views/LoginView.vue"
 import RegisterView from "@/components/views/RegisterView.vue"
 import UpdateLocationTestView from "@/components/views/UpdateLocationTestView.vue"
 import UpdatePersonTestView from "@/components/views/UpdatePersonTestView.vue"
-
+import UpdateTarotDeckView from "@/components/views/UpdateTarotDeckView.vue"
 interface RouteData {
     title: Route,
     path: string,
@@ -23,6 +24,8 @@ export enum Route {
     UPDATE_LOCATION = "Update Form",
     CREATE_PERSON = "Create Person",
     UPDATE_PERSON = "Update Person",
+    CREATE_DECK = "Create Deck",
+    UPDATE_DECK = "Update Deck",
 }
 
 export const routes: RouteData[] = [
@@ -47,6 +50,18 @@ export const routes: RouteData[] = [
         component: UpdatePersonTestView,
         title: Route.UPDATE_PERSON,
         keyName: "update_person",
+    },
+    {
+        path: "/create_deck",
+        component: CreateOrUpdateTarotDeckForm,
+        title: Route.CREATE_DECK,
+        keyName: "create_deck",
+    },
+    {
+        path: "/update_deck",
+        component: UpdateTarotDeckView,
+        title: Route.UPDATE_DECK,
+        keyName: "update_deck",
     },
 ]
 

@@ -412,7 +412,7 @@ model TarotSuit {
   cards   TarotCard[]
   aliases TarotSuitAlias[]
 
-  name  String
+  name  String  @unique
   notes String?
 }
 
@@ -486,6 +486,8 @@ model TarotDeckCard {
   meaning         String?
   picture         String?
   reversedMeaning String?
+
+  @@unique([cardId, tarotDeckId])
 }
 
 model TarotDeck {
@@ -504,6 +506,8 @@ model TarotDeck {
   name     String
   notes    String?
   pictures String[]
+
+  @@unique([userId, name])
 }
 
 model TarotReadingToRitualObservanceAndStepRelation {

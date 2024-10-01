@@ -89,7 +89,7 @@ watch(result, (newResult) => {
         originalFormState = {
             name: newResult.tarotDeck.name,
             notes: newResult.tarotDeck.notes ?? "",
-            tags: newResult.tarotDeck.tags.map((tag: TagToObjectRelation) => tag.tag.name) ?? [],
+            tags: [...tags.value],
             suitAliases: newResult.tarotDeck.suitAliases ?? [],
             majorArcanaAliases: newResult.tarotDeck.majorArcanaAliases ?? [],
         }

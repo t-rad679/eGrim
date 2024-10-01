@@ -2,12 +2,14 @@ import { Component } from "vue"
 
 import CreateLocationForm from "@/components/forms/CreateOrUpdateLocationForm.vue"
 import CreateOrUpdateTarotDeckForm from "@/components/forms/CreateOrUpdateTarotDeckForm.vue"
+import CreateOrUpdateTarotSpreadForm from "@/components/forms/CreateOrUpdateTarotSpreadForm.vue"
 import CreatePersonView from "@/components/views/CreatePersonView.vue"
 import LoginView from "@/components/views/LoginView.vue"
 import RegisterView from "@/components/views/RegisterView.vue"
 import UpdateLocationTestView from "@/components/views/UpdateLocationTestView.vue"
 import UpdatePersonTestView from "@/components/views/UpdatePersonTestView.vue"
 import UpdateTarotDeckView from "@/components/views/UpdateTarotDeckView.vue"
+import UpdateTarotSpreadView from "@/components/views/UpdateTarotSpreadView.vue"
 interface RouteData {
     title: Route,
     path: string,
@@ -26,6 +28,8 @@ export enum Route {
     UPDATE_PERSON = "Update Person",
     CREATE_DECK = "Create Deck",
     UPDATE_DECK = "Update Deck",
+    CREATE_SPREAD = "Create Spread",
+    UPDATE_SPREAD = "Update Spread",
 }
 
 export const routes: RouteData[] = [
@@ -62,6 +66,18 @@ export const routes: RouteData[] = [
         component: UpdateTarotDeckView,
         title: Route.UPDATE_DECK,
         keyName: "update_deck",
+    },
+    {
+        path: "/create_spread",
+        component: CreateOrUpdateTarotSpreadForm,
+        title: Route.CREATE_SPREAD,
+        keyName: "create_spread",
+    },
+    {
+        path: "/update_spread",
+        component: UpdateTarotSpreadView,
+        title: Route.UPDATE_SPREAD,
+        keyName: "update_spread",
     },
 ]
 

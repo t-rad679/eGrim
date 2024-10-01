@@ -96,11 +96,27 @@ function handleLogout() {
             </v-btn>
           </router-link>
           <router-link
-            :to="getRouteData(Route.LOGIN).path"
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.CREATE_SPREAD).path"
           >
-            <v-btn @click="handleLogout">
-              Logout
+            <v-btn @click="navigate">
+              Create Spread
             </v-btn>
+          </router-link>
+          <router-link
+            v-slot="{ navigate }"
+            :to="getRouteData(Route.UPDATE_SPREAD).path"
+          >
+            <v-btn @click="navigate">
+              Update Spread
+            </v-btn>
+            <router-link
+              :to="getRouteData(Route.LOGIN).path"
+            >
+              <v-btn @click="handleLogout">
+                Logout
+              </v-btn>
+            </router-link>
           </router-link>
         </template>
       </v-col>

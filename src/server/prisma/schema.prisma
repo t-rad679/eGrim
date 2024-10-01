@@ -322,10 +322,8 @@ model TarotReading {
   spread   TarotSpread @relation(fields: [spreadId], references: [id])
   spreadId String
 
-  name String?
-  // TODO: Add interpretation field
-
-  dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
+  name           String?
+  interpretation String?
 }
 
 model PersonTarotRoleRelation {
@@ -336,7 +334,7 @@ model PersonTarotRoleRelation {
 
   role TarotRole
 
-  @@id([personId, tarotReadingId], name: "PersonTarotRoleRelationCompoundId")
+  @@id([personId, role, tarotReadingId], name: "PersonTarotRoleRelationCompoundId")
 }
 
 enum TarotRole {
@@ -385,16 +383,17 @@ model TarotCardDraw {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // TODO: Change this model to support drawing clarification cards
   card           TarotDeckCard         @relation(fields: [cardId], references: [id])
   cardId         String
-  position       TarotPosition         @relation(fields: [positionId], references: [id])
-  positionId     String
+  // TODO: Validate that position is unset only if clarification is true. Clarification may be true if position is set.
+  position       TarotPosition?        @relation(fields: [positionId], references: [id])
+  positionId     String?
   tags           TagToObjectRelation[]
   tarotReading   TarotReading          @relation(fields: [tarotReadingId], references: [id])
   tarotReadingId String
 
-  notes String?
+  clarification Boolean @default(false) // If true, this card was drawn to clarify another card or the entire reading
+  notes         String?
 }
 
 model TarotCard {

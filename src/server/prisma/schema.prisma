@@ -323,6 +323,7 @@ model TarotReading {
   spreadId String
 
   name String?
+  // TODO: Add interpretation field
 
   dummy Int? // https://github.com/MichalLytek/typegraphql-prisma/issues/19
 }
@@ -356,8 +357,8 @@ model TarotSpread {
   ritualSteps RitualStep[]
   tags        TagToObjectRelation[]
 
-  name  String
-  notes String?
+  name        String
+  description String?
 
   @@unique([userId, name])
 }
@@ -384,6 +385,7 @@ model TarotCardDraw {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // TODO: Change this model to support drawing clarification cards
   card           TarotDeckCard         @relation(fields: [cardId], references: [id])
   cardId         String
   position       TarotPosition         @relation(fields: [positionId], references: [id])

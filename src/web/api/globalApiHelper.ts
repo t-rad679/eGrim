@@ -1,8 +1,12 @@
-interface UserIdNameCompoundUniqueInput {
+type UserIdNameCompoundUniqueInput = {
     userId_name: {
         userId: string,
         name: string,
     }
+}
+
+export type UserIdNameCompoundWhereUniqueInput = {
+    where: UserIdNameCompoundUniqueInput,
 }
 
 // TODO: Rename this to reflect its use in queries and use it in all relevant queries
